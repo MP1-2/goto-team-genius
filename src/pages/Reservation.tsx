@@ -1,10 +1,10 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, CheckCircle, XCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import PaymentScreen from '@/components/payment/PaymentScreen';
 
 const MOCK_PURCHASED_NAMES = [
   { id: '1', name: 'Thunder Dragons', purchasedAt: '2025-03-15' },
@@ -19,13 +19,12 @@ const Reservation: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isReserved, setIsReserved] = useState(false);
-  const [showPayment, setShowPayment] = useState(false);
   const [purchasedNames] = useState(MOCK_PURCHASED_NAMES);
 
   const handleReserve = () => {
     if (!isSubscribed) {
-      // Show payment screen
-      setShowPayment(true);
+      // Navigate to payment page
+      navigate('/payment', { state: { teamName } });
       return;
     }
 
@@ -37,23 +36,6 @@ const Reservation: React.FC = () => {
       setIsReserved(true);
       setIsLoading(false);
     }, 1500);
-  };
-
-  const handlePaymentSuccess = () => {
-    toast.success('Payment successful!');
-    setShowPayment(false);
-    setIsLoading(true);
-    
-    // Process reservation after successful payment
-    setTimeout(() => {
-      setIsReserved(true);
-      setIsLoading(false);
-    }, 1500);
-  };
-
-  const handlePaymentCancel = () => {
-    toast.error('Payment cancelled');
-    setShowPayment(false);
   };
 
   const handleCreateLogo = () => {
@@ -78,13 +60,7 @@ const Reservation: React.FC = () => {
 
       {/* Content */}
       <div className="px-6 pt-6">
-        {showPayment ? (
-          <PaymentScreen 
-            teamName={teamName}
-            onSuccess={handlePaymentSuccess}
-            onCancel={handlePaymentCancel}
-          />
-        ) : !isReserved ? (
+        {!isReserved ? (
           <Card className="animate-fade-in">
             <CardHeader>
               <CardTitle className="text-2xl">{teamName}</CardTitle>

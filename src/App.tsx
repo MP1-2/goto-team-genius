@@ -15,6 +15,9 @@ import AISuggestions from "./pages/AISuggestions";
 import Reservation from "./pages/Reservation";
 import LogoCreation from "./pages/LogoCreation";
 import NotFound from "./pages/NotFound";
+import Favorites from "./pages/Favorites";
+import Profile from "./pages/Profile";
+import Payment from "./pages/Payment";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +36,9 @@ const App = () => (
           <Route path="/suggestions" element={<AISuggestions />} />
           <Route path="/reservation" element={<Reservation />} />
           <Route path="/logo" element={<LogoCreation />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/payment" element={<Payment />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
