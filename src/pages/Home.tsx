@@ -1,12 +1,33 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, Sparkles, Bookmark, Image, Crown } from 'lucide-react';
 import BottomNavigation from '@/components/layout/BottomNavigation';
 import ActionCard from '@/components/home/ActionCard';
+import { useNavigate } from 'react-router-dom';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+
+// Mock data - in a real app this would come from an API
+const MOCK_PURCHASED_NAMES = [
+  { id: '1', name: 'Thunder Dragons', purchasedAt: '2025-03-15' },
+  { id: '2', name: 'Lightning Eagles', purchasedAt: '2025-03-28' },
+  { id: '3', name: 'Golden Knights', purchasedAt: '2025-04-05' },
+];
 
 const Home: React.FC = () => {
+  const navigate = useNavigate();
+  const [purchasedNames] = useState(MOCK_PURCHASED_NAMES);
+  
+  const handleLogoCreation = (teamName: string) => {
+    navigate('/logo', { state: { teamName } });
+  };
+
   return (
     <div className="pb-20">
       {/* Header */}
@@ -48,12 +69,39 @@ const Home: React.FC = () => {
               icon={<Bookmark className="h-6 w-6" />}
               to="/search"
             />
-            <ActionCard
-              title="Create Logo"
-              description="Generate a custom team logo"
-              icon={<Image className="h-6 w-6" />}
-              to="/logo"
-            />
+            
+            {purchasedNames.length > 0 ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="cursor-pointer">
+                    <ActionCard
+                      title="Create Logo"
+                      description="Generate a custom team logo"
+                      icon={<Image className="h-6 w-6" />}
+                      to="#"
+                    />
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  {purchasedNames.map((name) => (
+                    <DropdownMenuItem 
+                      key={name.id}
+                      onClick={() => handleLogoCreation(name.name)}
+                    >
+                      {name.name}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <ActionCard
+                title="Create Logo"
+                description="Generate a custom team logo"
+                icon={<Image className="h-6 w-6" />}
+                to="/logo"
+              />
+            )}
+            
             <ActionCard
               title="Subscription"
               description="Upgrade for premium features"

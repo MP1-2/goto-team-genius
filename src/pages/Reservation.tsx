@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -6,6 +5,12 @@ import { ArrowLeft, CheckCircle, XCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import PaymentScreen from '@/components/payment/PaymentScreen';
+
+const MOCK_PURCHASED_NAMES = [
+  { id: '1', name: 'Thunder Dragons', purchasedAt: '2025-03-15' },
+  { id: '2', name: 'Lightning Eagles', purchasedAt: '2025-03-28' },
+  { id: '3', name: 'Golden Knights', purchasedAt: '2025-04-05' },
+];
 
 const Reservation: React.FC = () => {
   const navigate = useNavigate();
@@ -15,6 +20,7 @@ const Reservation: React.FC = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isReserved, setIsReserved] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
+  const [purchasedNames] = useState(MOCK_PURCHASED_NAMES);
 
   const handleReserve = () => {
     if (!isSubscribed) {
@@ -48,6 +54,10 @@ const Reservation: React.FC = () => {
   const handlePaymentCancel = () => {
     toast.error('Payment cancelled');
     setShowPayment(false);
+  };
+
+  const handleCreateLogo = () => {
+    navigate('/logo', { state: { teamName } });
   };
 
   return (
@@ -157,7 +167,7 @@ const Reservation: React.FC = () => {
               <Button
                 variant="outline"
                 className="w-full"
-                onClick={() => navigate('/logo', { state: { teamName } })}
+                onClick={handleCreateLogo}
               >
                 Create Logo for this Name
               </Button>
