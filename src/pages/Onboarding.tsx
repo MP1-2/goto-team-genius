@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, UserPlus } from 'lucide-react';
 import StepIndicator from '@/components/onboarding/StepIndicator';
 import PreferenceOption from '@/components/onboarding/PreferenceOption';
+import { toast } from 'sonner';
 
 const Onboarding: React.FC = () => {
   const navigate = useNavigate();
@@ -54,7 +55,19 @@ const Onboarding: React.FC = () => {
       setStep(step + 1);
     } else {
       // Save preferences and navigate to home
-      localStorage.setItem('userPreferences', JSON.stringify(preferences));
+      try {
+        const userInfoStr = localStorage.getItem('userInfo');
+        if (userInfoStr) {
+          const userInfo = JSON.parse(userInfoStr);
+          userInfo.interests = preferences;
+          localStorage.setItem('userInfo', JSON.stringify(userInfo));
+          toast.success('Profile created successfully');
+        } else {
+          localStorage.setItem('userPreferences', JSON.stringify(preferences));
+        }
+      } catch (error) {
+        console.error('Error saving preferences:', error);
+      }
       navigate('/home');
     }
   };

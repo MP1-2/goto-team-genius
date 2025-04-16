@@ -2,51 +2,53 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { ArrowLeft, Eye, EyeOff, UserPlus } from 'lucide-react';
 import { toast } from 'sonner';
 
-const Login: React.FC = () => {
+const Signup: React.FC = () => {
   const navigate = useNavigate();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
-    if (!email || !password) {
-      toast.error('Please enter both email and password');
+    if (!name || !email || !password || !confirmPassword) {
+      toast.error('Please fill out all fields');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
+
+    if (!email.includes('@')) {
+      toast.error('Please enter a valid email address');
       return;
     }
     
     setIsLoading(true);
     
-    // Simulate login API call with basic validation
+    // Simulate signup API call
     setTimeout(() => {
-      // Simple email validation (you might want to replace this with more robust validation)
-      const isValidEmail = email.includes('@');
-      const isValidPassword = password.length >= 6;
-
-      if (isValidEmail && isValidPassword) {
-        // Simulate getting user info
-        const storedUserInfo = localStorage.getItem('userInfo');
-        const userInfo = storedUserInfo ? JSON.parse(storedUserInfo) : { name: 'John Doe', email: email, interests: [] };
-        
-        // Store current user info to local storage
-        if (!storedUserInfo) {
-          localStorage.setItem('userInfo', JSON.stringify(userInfo));
-        }
-        
-        toast.success('Login successful');
-        navigate('/home');
-      } else {
-        toast.error('Invalid email or password');
-        setIsLoading(false);
-      }
+      // Store user info in localStorage for demo purposes
+      const userInfo = { name, email, interests: [] };
+      localStorage.setItem('userInfo', JSON.stringify(userInfo));
+      
+      toast.success('Account created successfully');
+      navigate('/onboarding'); // Go to onboarding to collect interests
     }, 1500);
   };
 
@@ -63,13 +65,26 @@ const Login: React.FC = () => {
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-3xl font-bold">Welcome Back</h1>
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground">
+              <UserPlus className="h-6 w-6" />
+            </div>
+            <h1 className="text-3xl font-bold">Create Account</h1>
             <p className="mt-2 text-muted-foreground">
-              Log in to access your fantasy team names
+              Sign up to start finding and reserving team names
             </p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleSignup} className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Full Name</label>
+              <Input
+                type="text"
+                placeholder="John Doe"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+
             <div className="space-y-2">
               <label className="text-sm font-medium">Email</label>
               <Input
@@ -81,12 +96,7 @@ const Login: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium">Password</label>
-                <Link to="/forgot-password" className="text-xs text-primary hover:underline">
-                  Forgot password?
-                </Link>
-              </div>
+              <label className="text-sm font-medium">Password</label>
               <div className="relative">
                 <Input
                   type={showPassword ? 'text' : 'password'}
@@ -110,19 +120,31 @@ const Login: React.FC = () => {
               </div>
             </div>
 
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Confirm Password</label>
+              <div className="relative">
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+              </div>
+            </div>
+
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? (
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
               ) : (
-                'Log In'
+                'Sign Up'
               )}
             </Button>
           </form>
 
           <div className="text-center text-sm">
-            Don't have an account?{' '}
-            <Link to="/signup" className="text-primary hover:underline">
-              Sign up
+            Already have an account?{' '}
+            <Link to="/login" className="text-primary hover:underline">
+              Log in
             </Link>
           </div>
         </div>
@@ -131,4 +153,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login;
+export default Signup;

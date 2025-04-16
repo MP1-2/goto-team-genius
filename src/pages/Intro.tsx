@@ -33,7 +33,7 @@ const Intro: React.FC = () => {
         </div>
         
         <Button asChild className="mt-8" size="lg">
-          <Link to="/onboarding">
+          <Link to="/login">
             Get Started
             <ArrowRight className="ml-2 h-5 w-5" />
           </Link>

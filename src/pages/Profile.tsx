@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft, Save, Edit, Check, CreditCard, LogOut } from 'lucide-react';
@@ -8,11 +9,19 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import InterestsSection from '@/components/profile/InterestsSection';
 
-const MOCK_USER = {
+const DEFAULT_USER = {
   name: 'John Doe',
   email: 'john.doe@example.com',
   password: '********',
+};
+
+const DEFAULT_INTERESTS = {
+  sports: [],
+  teams: [],
+  keywordTypes: [],
+  keywords: '',
 };
 
 const MOCK_SUBSCRIPTIONS = [
@@ -41,10 +50,39 @@ const MOCK_SUBSCRIPTIONS = [
 
 const Profile: React.FC = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(MOCK_USER);
+  const [user, setUser] = useState(DEFAULT_USER);
+  const [interests, setInterests] = useState(DEFAULT_INTERESTS);
   const [subscriptions] = useState(MOCK_SUBSCRIPTIONS);
   const [editing, setEditing] = useState(false);
-  const [formData, setFormData] = useState(MOCK_USER);
+  const [formData, setFormData] = useState(DEFAULT_USER);
+  const [formInterests, setFormInterests] = useState(DEFAULT_INTERESTS);
+  
+  useEffect(() => {
+    // Load user data from localStorage if available
+    const userInfoStr = localStorage.getItem('userInfo');
+    if (userInfoStr) {
+      try {
+        const userInfo = JSON.parse(userInfoStr);
+        setUser({
+          name: userInfo.name || DEFAULT_USER.name,
+          email: userInfo.email || DEFAULT_USER.email,
+          password: DEFAULT_USER.password,
+        });
+        setFormData({
+          name: userInfo.name || DEFAULT_USER.name,
+          email: userInfo.email || DEFAULT_USER.email,
+          password: DEFAULT_USER.password,
+        });
+        
+        if (userInfo.interests) {
+          setInterests(userInfo.interests);
+          setFormInterests(userInfo.interests);
+        }
+      } catch (error) {
+        console.error('Error parsing user info:', error);
+      }
+    }
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -53,7 +91,24 @@ const Profile: React.FC = () => {
 
   const handleSave = () => {
     setUser(formData);
+    setInterests(formInterests);
     setEditing(false);
+    
+    // Save to localStorage
+    try {
+      const userInfoStr = localStorage.getItem('userInfo');
+      const userInfo = userInfoStr ? JSON.parse(userInfoStr) : {};
+      const updatedUserInfo = {
+        ...userInfo,
+        name: formData.name,
+        email: formData.email,
+        interests: formInterests
+      };
+      localStorage.setItem('userInfo', JSON.stringify(updatedUserInfo));
+    } catch (error) {
+      console.error('Error saving user info:', error);
+    }
+    
     toast.success('Profile updated successfully');
   };
 
@@ -68,6 +123,9 @@ const Profile: React.FC = () => {
   };
 
   const handleLogout = () => {
+    // In a real app, you would also clear any auth tokens
+    // For this demo, we'll just navigate to the intro page
+    toast.success('Logged out successfully');
     navigate('/');
   };
 
@@ -116,8 +174,9 @@ const Profile: React.FC = () => {
 
       <div className="px-6 py-6">
         <Tabs defaultValue="account">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="account">Account</TabsTrigger>
+            <TabsTrigger value="interests">Interests</TabsTrigger>
             <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
           </TabsList>
           
@@ -173,6 +232,20 @@ const Profile: React.FC = () => {
                 </Button>
               )}
             </div>
+          </TabsContent>
+          
+          <TabsContent value="interests" className="mt-6">
+            <InterestsSection 
+              interests={editing ? formInterests : interests}
+              onInterestChange={setFormInterests}
+              isEditing={editing}
+            />
+            
+            {editing && (
+              <Button className="w-full mt-4" onClick={handleSave}>
+                Save Changes
+              </Button>
+            )}
           </TabsContent>
           
           <TabsContent value="subscriptions" className="mt-6">

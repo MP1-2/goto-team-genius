@@ -10,6 +10,7 @@ import Intro from "./pages/Intro";
 import Onboarding from "./pages/Onboarding";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import TeamNameSearch from "./pages/TeamNameSearch";
 import AISuggestions from "./pages/AISuggestions";
 import Reservation from "./pages/Reservation";
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/search" element={<TeamNameSearch />} />
           <Route path="/suggestions" element={<AISuggestions />} />
           <Route path="/reservation" element={<Reservation />} />
