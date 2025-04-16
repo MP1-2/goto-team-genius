@@ -17,6 +17,7 @@ const Login: React.FC = () => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Basic validation
     if (!email || !password) {
       toast.error('Please enter both email and password');
       return;
@@ -24,11 +25,19 @@ const Login: React.FC = () => {
     
     setIsLoading(true);
     
-    // Simulate login API call
+    // Simulate login API call with basic validation
     setTimeout(() => {
-      toast.success('Login successful');
-      navigate('/home');
-      setIsLoading(false);
+      // Simple email validation (you might want to replace this with more robust validation)
+      const isValidEmail = email.includes('@');
+      const isValidPassword = password.length >= 6;
+
+      if (isValidEmail && isValidPassword) {
+        toast.success('Login successful');
+        navigate('/home');
+      } else {
+        toast.error('Invalid email or password');
+        setIsLoading(false);
+      }
     }, 1500);
   };
 
