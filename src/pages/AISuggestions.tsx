@@ -204,6 +204,26 @@ const AISuggestions: React.FC = () => {
 
       {/* Content */}
       <div className="px-6 pt-6">
+        {/* Custom Prompt Section - MOVED TO THE TOP */}
+        <section className="mb-6">
+          <h2 className="mb-4 text-lg font-semibold">Generate Custom Suggestions</h2>
+          <div className="rounded-lg border bg-card p-4">
+            <label className="mb-2 block text-sm font-medium">
+              Enter a custom prompt
+            </label>
+            <div className="mb-4 flex gap-2">
+              <Input
+                placeholder="e.g., dragons, space, ninjas..."
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+              />
+              <Button onClick={handleGenerate} disabled={isLoading}>
+                Generate
+              </Button>
+            </div>
+          </div>
+        </section>
+
         {/* Personalized Suggestions */}
         <section>
           <div className="mb-4 flex items-center justify-between">
@@ -245,25 +265,7 @@ const AISuggestions: React.FC = () => {
           )}
         </section>
 
-        {/* Custom Prompt Section */}
-        <section className="mt-10">
-          <h2 className="mb-4 text-lg font-semibold">Generate Custom Suggestions</h2>
-          <div className="rounded-lg border bg-card p-4">
-            <label className="mb-2 block text-sm font-medium">
-              Enter a custom prompt
-            </label>
-            <div className="mb-4 flex gap-2">
-              <Input
-                placeholder="e.g., dragons, space, ninjas..."
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-              />
-              <Button onClick={handleGenerate} disabled={isLoading}>
-                Generate
-              </Button>
-            </div>
-          </div>
-        </section>
+        {/* Removed the old custom prompt section */}
       </div>
     </div>
   );
