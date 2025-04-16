@@ -16,11 +16,28 @@ interface InterestsSectionProps {
   isEditing: boolean;
 }
 
+const defaultInterests = {
+  sports: [],
+  teams: [],
+  keywordTypes: [],
+  keywords: '',
+};
+
 const InterestsSection: React.FC<InterestsSectionProps> = ({ 
-  interests, 
+  interests = defaultInterests, 
   onInterestChange,
   isEditing
 }) => {
+  // Ensure interests object and its properties are defined
+  const safeInterests = {
+    ...defaultInterests,
+    ...interests,
+    sports: interests?.sports || [],
+    teams: interests?.teams || [],
+    keywordTypes: interests?.keywordTypes || [],
+    keywords: interests?.keywords || '',
+  };
+
   const sports = [
     { id: 'football', label: 'Football', icon: <div className="h-6 w-6">🏈</div> },
     { id: 'basketball', label: 'Basketball', icon: <div className="h-6 w-6">🏀</div> },
@@ -65,12 +82,12 @@ const InterestsSection: React.FC<InterestsSectionProps> = ({
                 key={sport.id}
                 label={sport.label}
                 icon={sport.icon}
-                selected={interests.sports.includes(sport.id)}
+                selected={safeInterests.sports.includes(sport.id)}
                 onClick={() => {
                   if (isEditing) {
                     onInterestChange({
-                      ...interests,
-                      sports: toggleItem(interests.sports, sport.id),
+                      ...safeInterests,
+                      sports: toggleItem(safeInterests.sports, sport.id),
                     });
                   }
                 }}
@@ -86,12 +103,12 @@ const InterestsSection: React.FC<InterestsSectionProps> = ({
               <PreferenceOption
                 key={team.id}
                 label={team.label}
-                selected={interests.teams.includes(team.id)}
+                selected={safeInterests.teams.includes(team.id)}
                 onClick={() => {
                   if (isEditing) {
                     onInterestChange({
-                      ...interests,
-                      teams: toggleItem(interests.teams, team.id),
+                      ...safeInterests,
+                      teams: toggleItem(safeInterests.teams, team.id),
                     });
                   }
                 }}
@@ -107,12 +124,12 @@ const InterestsSection: React.FC<InterestsSectionProps> = ({
               <PreferenceOption
                 key={type.id}
                 label={type.label}
-                selected={interests.keywordTypes.includes(type.id)}
+                selected={safeInterests.keywordTypes.includes(type.id)}
                 onClick={() => {
                   if (isEditing) {
                     onInterestChange({
-                      ...interests,
-                      keywordTypes: toggleItem(interests.keywordTypes, type.id),
+                      ...safeInterests,
+                      keywordTypes: toggleItem(safeInterests.keywordTypes, type.id),
                     });
                   }
                 }}
@@ -126,10 +143,10 @@ const InterestsSection: React.FC<InterestsSectionProps> = ({
           {isEditing ? (
             <Input
               id="keywords"
-              value={interests.keywords}
+              value={safeInterests.keywords}
               onChange={(e) => {
                 onInterestChange({
-                  ...interests,
+                  ...safeInterests,
                   keywords: e.target.value,
                 });
               }}
@@ -137,7 +154,7 @@ const InterestsSection: React.FC<InterestsSectionProps> = ({
             />
           ) : (
             <div className="rounded-md border px-3 py-2">
-              {interests.keywords || "No additional keywords"}
+              {safeInterests.keywords || "No additional keywords"}
             </div>
           )}
         </div>
