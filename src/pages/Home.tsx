@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,6 +22,10 @@ const Home: React.FC = () => {
     navigate('/search', { state: { searchQuery: name } });
   };
 
+  const redirectToSearch = () => {
+    navigate('/search');
+  };
+
   return (
     <div className="pb-20">
       {/* Header */}
@@ -32,11 +37,12 @@ const Home: React.FC = () => {
           </p>
         </div>
         <div className="absolute -bottom-6 left-0 right-0 px-6">
-          <div className="flex items-center rounded-full bg-background p-1 shadow-md">
+          <div className="flex items-center rounded-full bg-background p-1 shadow-md" onClick={redirectToSearch}>
             <Input
-              className="flex-1 rounded-full border-0 bg-transparent px-4 py-2 focus-visible:ring-0 focus-visible:ring-offset-0"
-              placeholder="Search for a team name..."
+              className="flex-1 rounded-full border-0 bg-transparent px-4 py-2 focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer"
+              placeholder="Check team name availability..."
               type="search"
+              readOnly
             />
             <Button size="icon" className="rounded-full">
               <Search className="h-4 w-4" />
