@@ -13,6 +13,7 @@ import Login from "./pages/Login";
 import TeamNameSearch from "./pages/TeamNameSearch";
 import AISuggestions from "./pages/AISuggestions";
 import Reservation from "./pages/Reservation";
+import LogoCreation from "./pages/LogoCreation";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,7 +32,7 @@ const App = () => (
           <Route path="/search" element={<TeamNameSearch />} />
           <Route path="/suggestions" element={<AISuggestions />} />
           <Route path="/reservation" element={<Reservation />} />
-          <Route path="/logo" element={<div>Logo Creation Page (Coming Soon)</div>} />
+          <Route path="/logo" element={<LogoCreation />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
