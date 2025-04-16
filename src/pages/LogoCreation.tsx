@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download, Loader2 } from 'lucide-react';
+import { ArrowLeft, Download, Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from 'sonner';
@@ -29,18 +29,30 @@ const LogoCreation: React.FC = () => {
     }
     
     setIsGenerating(true);
-    toast.info('Generating your logo...');
+    setLogoGenerated(false);
+    toast.info('Generating your logo...', {
+      description: 'This may take a few seconds'
+    });
     
     // Simulate logo generation
     setTimeout(() => {
       setIsGenerating(false);
       setLogoGenerated(true);
-      toast.success('Logo generated successfully!');
+      toast.success('Logo generated successfully!', {
+        description: 'Your logo is ready to download'
+      });
     }, 2500);
   };
   
   const handleDownload = () => {
-    toast.success('Logo downloaded successfully!');
+    // In a real implementation, this would create and download an image file
+    toast.success('Logo downloaded successfully!', {
+      description: 'Your logo has been saved to your device'
+    });
+  };
+
+  const handleRegenerate = () => {
+    handleGenerateLogo();
   };
   
   return (
@@ -92,7 +104,11 @@ const LogoCreation: React.FC = () => {
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Generating...
                     </>
-                  ) : 'Generate Logo'}
+                  ) : logoGenerated ? (
+                    'Generate New Logo'
+                  ) : (
+                    'Generate Logo'
+                  )}
                 </Button>
               </div>
               
@@ -105,7 +121,16 @@ const LogoCreation: React.FC = () => {
               />
               
               {logoGenerated && (
-                <div className="flex justify-center mt-4">
+                <div className="flex flex-col md:flex-row justify-center gap-3 mt-4">
+                  <Button 
+                    onClick={handleRegenerate}
+                    variant="outline"
+                    className="w-full md:w-auto"
+                  >
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                    Regenerate
+                  </Button>
+                  
                   <Button 
                     onClick={handleDownload}
                     className="w-full md:w-auto"

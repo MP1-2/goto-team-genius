@@ -18,7 +18,12 @@ const LogoNameInput: React.FC<LogoNameInputProps> = ({ name, setName }) => {
         value={name}
         onChange={(e) => setName(e.target.value)}
         className="w-full"
+        autoFocus
+        maxLength={30}
       />
+      <p className="text-xs text-muted-foreground">
+        {name.length}/30 characters
+      </p>
     </div>
   );
 };

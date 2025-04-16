@@ -30,11 +30,31 @@ const LogoStyleSelector: React.FC<LogoStyleSelectorProps> = ({
           <SelectValue placeholder="Select a style" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="Modern">Modern</SelectItem>
-          <SelectItem value="Vintage">Vintage</SelectItem>
-          <SelectItem value="Cartoon">Cartoon</SelectItem>
+          <SelectItem value="Modern" className="flex items-center">
+            <div className="flex items-center">
+              <div className="w-4 h-4 bg-primary rounded mr-2"></div>
+              <span>Modern</span>
+            </div>
+          </SelectItem>
+          <SelectItem value="Vintage" className="flex items-center">
+            <div className="flex items-center">
+              <div className="w-4 h-4 bg-orange-500 rounded-full mr-2"></div>
+              <span>Vintage</span>
+            </div>
+          </SelectItem>
+          <SelectItem value="Cartoon" className="flex items-center">
+            <div className="flex items-center">
+              <div className="w-4 h-4 bg-green-500 rounded-sm mr-2"></div>
+              <span>Cartoon</span>
+            </div>
+          </SelectItem>
         </SelectContent>
       </Select>
+      <p className="text-xs text-muted-foreground">
+        {selectedStyle === 'Modern' && 'Clean, sleek design with sharp lines and minimal elements'}
+        {selectedStyle === 'Vintage' && 'Classic look with retro elements and decorative touches'}
+        {selectedStyle === 'Cartoon' && 'Playful design with bold colors and fun elements'}
+      </p>
     </div>
   );
 };
