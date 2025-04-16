@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -50,24 +49,27 @@ const Home: React.FC = () => {
       <div className="px-6 pt-12">
         <section className="mt-4">
           <h2 className="mb-4 text-lg font-semibold">Quick Actions</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <ActionCard
               title="AI Suggestions"
               description="Get personalized team name ideas"
               icon={<Sparkles className="h-6 w-6" />}
               to="/suggestions"
+              className="sm:col-span-1"
             />
             <ActionCard
               title="Reserve Name"
               description="Secure your unique team name"
               icon={<Bookmark className="h-6 w-6" />}
               to="/search"
+              className="sm:col-span-1"
             />
             <ActionCard
               title="Create Logo"
               description="Generate a custom team logo"
               icon={<Image className="h-6 w-6" />}
               to="/logo"
+              className="sm:col-span-1"
             />
           </div>
         </section>
