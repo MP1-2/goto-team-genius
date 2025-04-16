@@ -31,6 +31,7 @@ const App = () => (
           <Route path="/search" element={<TeamNameSearch />} />
           <Route path="/suggestions" element={<AISuggestions />} />
           <Route path="/reservation" element={<Reservation />} />
+          <Route path="/logo" element={<div>Logo Creation Page (Coming Soon)</div>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

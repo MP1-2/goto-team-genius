@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, basketball, football, baseball, UserPlus } from 'lucide-react';
+import { ArrowRight, UserPlus } from 'lucide-react';
 import StepIndicator from '@/components/onboarding/StepIndicator';
 import PreferenceOption from '@/components/onboarding/PreferenceOption';
 
@@ -19,9 +20,9 @@ const Onboarding: React.FC = () => {
   const totalSteps = 3;
 
   const sports = [
-    { id: 'football', label: 'Football', icon: <football className="h-6 w-6" /> },
-    { id: 'basketball', label: 'Basketball', icon: <basketball className="h-6 w-6" /> },
-    { id: 'baseball', label: 'Baseball', icon: <baseball className="h-6 w-6" /> },
+    { id: 'football', label: 'Football', icon: <div className="h-6 w-6">🏈</div> },
+    { id: 'basketball', label: 'Basketball', icon: <div className="h-6 w-6">🏀</div> },
+    { id: 'baseball', label: 'Baseball', icon: <div className="h-6 w-6">⚾</div> },
   ];
 
   const teams = [

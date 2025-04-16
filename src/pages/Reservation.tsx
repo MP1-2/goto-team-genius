@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, CheckCircle, XCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
+import PaymentScreen from '@/components/payment/PaymentScreen';
 
 const Reservation: React.FC = () => {
   const navigate = useNavigate();
@@ -13,16 +14,12 @@ const Reservation: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isReserved, setIsReserved] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
 
   const handleReserve = () => {
     if (!isSubscribed) {
-      // Redirect to subscription page
-      toast.error('Subscription required to reserve names');
-      setIsLoading(true);
-      setTimeout(() => {
-        navigate('/subscription', { state: { returnTo: 'reservation', teamName } });
-        setIsLoading(false);
-      }, 1000);
+      // Show payment screen
+      setShowPayment(true);
       return;
     }
 
@@ -34,6 +31,23 @@ const Reservation: React.FC = () => {
       setIsReserved(true);
       setIsLoading(false);
     }, 1500);
+  };
+
+  const handlePaymentSuccess = () => {
+    toast.success('Payment successful!');
+    setShowPayment(false);
+    setIsLoading(true);
+    
+    // Process reservation after successful payment
+    setTimeout(() => {
+      setIsReserved(true);
+      setIsLoading(false);
+    }, 1500);
+  };
+
+  const handlePaymentCancel = () => {
+    toast.error('Payment cancelled');
+    setShowPayment(false);
   };
 
   return (
@@ -54,7 +68,13 @@ const Reservation: React.FC = () => {
 
       {/* Content */}
       <div className="px-6 pt-6">
-        {!isReserved ? (
+        {showPayment ? (
+          <PaymentScreen 
+            teamName={teamName}
+            onSuccess={handlePaymentSuccess}
+            onCancel={handlePaymentCancel}
+          />
+        ) : !isReserved ? (
           <Card className="animate-fade-in">
             <CardHeader>
               <CardTitle className="text-2xl">{teamName}</CardTitle>
@@ -107,7 +127,7 @@ const Reservation: React.FC = () => {
                 ) : isSubscribed ? (
                   'Reserve Now'
                 ) : (
-                  'Subscribe to Reserve'
+                  'Continue to Payment'
                 )}
               </Button>
             </CardFooter>
