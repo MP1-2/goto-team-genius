@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -59,13 +58,18 @@ const Profile: React.FC = () => {
     toast.success('Profile updated successfully');
   };
 
-  const handleExtendSubscription = (subscriptionId: string) => {
-    navigate('/payment', { state: { subscriptionId } });
+  const handleExtendSubscription = (subscriptionId: string, teamName: string, expiresAt: string) => {
+    navigate('/payment', { 
+      state: { 
+        subscriptionId,
+        teamName,
+        expiryDate: expiresAt
+      } 
+    });
   };
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
       <div className="sticky top-0 z-10 bg-background">
         <div className="flex items-center justify-between border-b px-4 py-3">
           <div className="flex items-center">
@@ -98,7 +102,6 @@ const Profile: React.FC = () => {
         </div>
       </div>
 
-      {/* Content */}
       <div className="px-6 py-6">
         <Tabs defaultValue="account">
           <TabsList className="grid w-full grid-cols-2">
@@ -187,7 +190,11 @@ const Profile: React.FC = () => {
                     <Button 
                       className="w-full" 
                       size="sm"
-                      onClick={() => handleExtendSubscription(subscription.id)}
+                      onClick={() => handleExtendSubscription(
+                        subscription.id, 
+                        subscription.teamName,
+                        subscription.expiresAt
+                      )}
                     >
                       <CreditCard className="mr-2 h-4 w-4" />
                       Extend Reservation

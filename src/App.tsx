@@ -14,6 +14,7 @@ import TeamNameSearch from "./pages/TeamNameSearch";
 import AISuggestions from "./pages/AISuggestions";
 import Reservation from "./pages/Reservation";
 import ReservationSuccess from "./pages/ReservationSuccess";
+import SubscriptionExtendedSuccess from "./pages/SubscriptionExtendedSuccess";
 import LogoCreation from "./pages/LogoCreation";
 import NotFound from "./pages/NotFound";
 import Favorites from "./pages/Favorites";
@@ -37,6 +38,7 @@ const App = () => (
           <Route path="/suggestions" element={<AISuggestions />} />
           <Route path="/reservation" element={<Reservation />} />
           <Route path="/reservation-success" element={<ReservationSuccess />} />
+          <Route path="/subscription-extended-success" element={<SubscriptionExtendedSuccess />} />
           <Route path="/logo" element={<LogoCreation />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/profile" element={<Profile />} />

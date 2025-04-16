@@ -2,14 +2,26 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Sparkles, Bookmark, Image, Crown } from 'lucide-react';
+import { Search, Sparkles, Bookmark, Image } from 'lucide-react';
 import BottomNavigation from '@/components/layout/BottomNavigation';
 import ActionCard from '@/components/home/ActionCard';
 import { useNavigate } from 'react-router-dom';
 
+// Mock data for recently searched names
+const MOCK_RECENT_SEARCHES = [
+  { id: '1', name: 'Touchdown Titans', searchedAt: '2025-04-15T10:30:00Z' },
+  { id: '2', name: 'Hoop Dreams', searchedAt: '2025-04-14T14:45:00Z' },
+  { id: '3', name: 'Diamond Dynamos', searchedAt: '2025-04-13T09:15:00Z' },
+];
+
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const [recentSearches, setRecentSearches] = useState(MOCK_RECENT_SEARCHES);
   
+  const handleCheckName = (name: string) => {
+    navigate('/search', { state: { searchQuery: name } });
+  };
+
   return (
     <div className="pb-20">
       {/* Header */}
@@ -57,30 +69,28 @@ const Home: React.FC = () => {
               icon={<Image className="h-6 w-6" />}
               to="/logo"
             />
-            <ActionCard
-              title="Subscription"
-              description="Upgrade for premium features"
-              icon={<Crown className="h-6 w-6" />}
-              to="/subscription"
-            />
           </div>
         </section>
 
         <section className="mt-8">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Trending Names</h2>
+            <h2 className="text-lg font-semibold">Recently Searched</h2>
             <Button variant="link" className="text-sm">
               See All
             </Button>
           </div>
           <div className="mt-2 space-y-3">
-            {['Touchdown Titans', 'Hoop Dreams', 'Diamond Dynamos'].map((name) => (
+            {recentSearches.map((search) => (
               <div
-                key={name}
+                key={search.id}
                 className="flex items-center justify-between rounded-lg border p-3"
               >
-                <span>{name}</span>
-                <Button variant="outline" size="sm">
+                <span>{search.name}</span>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleCheckName(search.name)}
+                >
                   Check
                 </Button>
               </div>

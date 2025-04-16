@@ -38,6 +38,7 @@ const Payment: React.FC = () => {
   // Determine if this payment is for a subscription extension or new reservation
   const subscriptionId = location.state?.subscriptionId;
   const teamName = location.state?.teamName || 'Team Name';
+  const expiryDate = location.state?.expiryDate;
   const isExtension = !!subscriptionId;
 
   const handleCreditCardSubmit = (values: z.infer<typeof creditCardSchema>) => {
@@ -49,9 +50,18 @@ const Payment: React.FC = () => {
       toast.success('Payment successful!');
       
       if (isExtension) {
-        navigate('/profile', { state: { tab: 'subscriptions' } });
+        // Calculate new expiry date (1 year from now)
+        const newExpiryDate = new Date();
+        newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
+        
+        navigate('/subscription-extended-success', { 
+          state: { 
+            teamName, 
+            expiryDate: newExpiryDate.toISOString().split('T')[0]
+          } 
+        });
       } else {
-        // Redirect to the reservation success page instead of logo creation
+        // Redirect to the reservation success page
         navigate('/reservation-success', { state: { teamName } });
       }
     }, 2000);
