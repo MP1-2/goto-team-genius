@@ -11,6 +11,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertCircle, CheckCircle } from 'lucide-react';
 
 const creditCardSchema = z.object({
   cardNumber: z.string().min(16, 'Card number must be at least 16 digits'),
@@ -24,6 +28,14 @@ const Payment: React.FC = () => {
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState('creditCard');
+  
+  // PayPal flow states
+  const [showPayPalLogin, setShowPayPalLogin] = useState(false);
+  const [showPayPalSummary, setShowPayPalSummary] = useState(false);
+  const [payPalEmail, setPayPalEmail] = useState('');
+  const [payPalPassword, setPayPalPassword] = useState('');
+  const [payPalProcessing, setPayPalProcessing] = useState(false);
+  const [payPalSuccess, setPayPalSuccess] = useState(false);
 
   const form = useForm<z.infer<typeof creditCardSchema>>({
     resolver: zodResolver(creditCardSchema),
@@ -67,10 +79,65 @@ const Payment: React.FC = () => {
     }, 2000);
   };
 
+  // Start the PayPal flow
   const handlePayPalPayment = () => {
-    // In a real implementation, you would redirect to PayPal here
-    window.open('https://www.paypal.com', '_blank');
-    toast('Redirecting to PayPal...');
+    setShowPayPalLogin(true);
+  };
+
+  // Handle PayPal login
+  const handlePayPalLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!payPalEmail) {
+      toast.error('Please enter your PayPal email or phone');
+      return;
+    }
+    
+    if (!payPalPassword) {
+      toast.error('Please enter your PayPal password');
+      return;
+    }
+    
+    // Mock login process
+    setPayPalProcessing(true);
+    
+    setTimeout(() => {
+      setPayPalProcessing(false);
+      setShowPayPalLogin(false);
+      setShowPayPalSummary(true);
+    }, 1500);
+  };
+
+  // Complete PayPal payment
+  const handlePayPalComplete = () => {
+    setPayPalProcessing(true);
+    
+    // Mock payment processing
+    setTimeout(() => {
+      setPayPalProcessing(false);
+      setPayPalSuccess(true);
+      
+      // Show success message
+      setTimeout(() => {
+        setShowPayPalSummary(false);
+        toast.success('PayPal payment successful!');
+        
+        // Navigate to appropriate success page
+        if (isExtension) {
+          const newExpiryDate = new Date();
+          newExpiryDate.setFullYear(newExpiryDate.getFullYear() + 1);
+          
+          navigate('/subscription-extended-success', { 
+            state: { 
+              teamName, 
+              expiryDate: newExpiryDate.toISOString().split('T')[0]
+            } 
+          });
+        } else {
+          navigate('/reservation-success', { state: { teamName } });
+        }
+      }, 1500);
+    }, 2000);
   };
 
   const handleVenmoPayment = () => {
@@ -263,6 +330,202 @@ const Payment: React.FC = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* PayPal Login Dialog */}
+      <Dialog open={showPayPalLogin} onOpenChange={setShowPayPalLogin}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="mx-auto mb-4">
+              <img 
+                src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-200px.png" 
+                alt="PayPal Logo" 
+                className="h-12" 
+              />
+            </div>
+            <DialogTitle>Log in to PayPal</DialogTitle>
+            <DialogDescription>
+              Enter your email or mobile number to get started
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handlePayPalLogin} className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="paypal-email" className="text-sm font-medium">
+                Email or mobile number
+              </label>
+              <Input
+                id="paypal-email"
+                placeholder="Email or phone"
+                value={payPalEmail}
+                onChange={(e) => setPayPalEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label htmlFor="paypal-password" className="text-sm font-medium">
+                  Password
+                </label>
+                <Button variant="link" size="sm" className="text-xs px-0 h-auto">
+                  Forgot password?
+                </Button>
+              </div>
+              <Input
+                id="paypal-password"
+                type="password"
+                placeholder="Password"
+                value={payPalPassword}
+                onChange={(e) => setPayPalPassword(e.target.value)}
+                required
+              />
+            </div>
+            <Button 
+              type="submit" 
+              className="w-full bg-[#0070ba] hover:bg-[#005ea6]"
+              disabled={payPalProcessing}
+            >
+              {payPalProcessing ? (
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              ) : (
+                'Log In'
+              )}
+            </Button>
+            <div className="text-center">
+              <span className="text-sm text-gray-500">or</span>
+            </div>
+            <Button 
+              type="button"
+              variant="outline" 
+              className="w-full"
+            >
+              Sign Up
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* PayPal Payment Summary Dialog */}
+      <Dialog open={showPayPalSummary} onOpenChange={setShowPayPalSummary}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="mx-auto mb-4">
+              <img 
+                src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-200px.png" 
+                alt="PayPal Logo" 
+                className="h-12" 
+              />
+            </div>
+            <DialogTitle>Payment Summary</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="rounded-md border p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium">Hi, {payPalEmail.split('@')[0] || 'User'}!</p>
+                  <h3 className="text-lg font-bold mt-2">Pay with</h3>
+                </div>
+                <div className="text-right">
+                  <p className="text-lg font-bold">$9.99 USD</p>
+                </div>
+              </div>
+
+              <div className="mt-4 space-y-3">
+                <div className="flex items-center space-x-2">
+                  <RadioGroup defaultValue="balance" className="flex flex-col space-y-3 w-full">
+                    <div className="flex items-center space-x-2 border rounded-md p-2">
+                      <RadioGroupItem value="balance" id="balance" />
+                      <label htmlFor="balance" className="flex flex-1 justify-between items-center cursor-pointer">
+                        <div className="flex items-center">
+                          <img 
+                            src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-200px.png" 
+                            alt="PayPal" 
+                            className="h-6 mr-2" 
+                          />
+                          <span>PayPal Balance</span>
+                        </div>
+                      </label>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2 border rounded-md p-2">
+                      <RadioGroupItem value="card" id="card" />
+                      <label htmlFor="card" className="flex flex-1 justify-between items-center cursor-pointer">
+                        <div className="flex items-center">
+                          <CreditCard className="h-5 w-5 mr-2" />
+                          <span>Credit Card (****1234)</span>
+                        </div>
+                      </label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                <Button 
+                  variant="link" 
+                  className="flex items-center text-sm text-blue-600 p-0 h-auto"
+                >
+                  + Add a payment method
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex justify-between text-sm">
+              <span>Team Name Reservation</span>
+              <span className="font-medium">{teamName}</span>
+            </div>
+
+            <div className="flex justify-between border-t pt-2 mt-2">
+              <span className="font-bold">Total</span>
+              <span className="font-bold">$9.99 USD</span>
+            </div>
+
+            <div className="rounded-md bg-blue-50 border border-blue-100 p-3 text-center">
+              <p className="text-sm text-blue-700">
+                PayPal is the safer, easier way to pay
+              </p>
+              <p className="text-xs text-blue-600 mt-1">
+                No matter where you shop, we keep your financial information secure
+              </p>
+            </div>
+
+            {payPalSuccess && (
+              <Alert className="bg-green-50 border-green-200">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <AlertTitle className="text-green-600">Payment Successful</AlertTitle>
+                <AlertDescription className="text-green-600">
+                  Your payment has been processed successfully.
+                </AlertDescription>
+              </Alert>
+            )}
+
+            <div className="pt-2">
+              <Button 
+                onClick={handlePayPalComplete} 
+                className="w-full bg-[#0070ba] hover:bg-[#005ea6]"
+                disabled={payPalProcessing || payPalSuccess}
+              >
+                {payPalProcessing ? (
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                ) : payPalSuccess ? (
+                  <>
+                    Payment Complete
+                    <CheckCircle className="ml-2 h-4 w-4" />
+                  </>
+                ) : (
+                  'Pay Now'
+                )}
+              </Button>
+              
+              <div className="text-center mt-3">
+                <Button variant="link" className="text-xs" disabled={payPalProcessing || payPalSuccess}>
+                  Cancel and return
+                </Button>
+              </div>
+              
+              <div className="text-center mt-4 text-xs text-gray-500">
+                <p>Policies | Terms | Privacy | Feedback</p>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
