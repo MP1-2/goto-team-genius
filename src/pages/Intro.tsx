@@ -22,14 +22,10 @@ const Intro: React.FC = () => {
         
         <Button asChild className="w-full mt-8" size="lg">
           <Link to="/login" className="flex items-center justify-center">
-            Get Started
+            Go to the App
             <ArrowRight className="ml-2 h-5 w-5" />
           </Link>
         </Button>
-        
-        <Link to="/login" className="text-primary hover:underline">
-          Already have an account? Log in
-        </Link>
       </div>
     </div>
   );
