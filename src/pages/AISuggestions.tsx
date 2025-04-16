@@ -14,7 +14,6 @@ const AISuggestions: React.FC = () => {
   const [suggestions, setSuggestions] = useState<Array<{
     id: string;
     name: string;
-    checked: boolean;
     favorite: boolean;
     platforms?: { name: string; available: boolean }[];
   }>>([]);
@@ -37,14 +36,74 @@ const AISuggestions: React.FC = () => {
     
     // Mock API call for generating suggestions
     setTimeout(() => {
-      // Create some example suggestions
+      // Create some example suggestions with platform availability already checked
       const mockSuggestions = [
-        { id: '1', name: 'Touchdown Titans', checked: false, favorite: false },
-        { id: '2', name: 'Field Goal Phenoms', checked: false, favorite: false },
-        { id: '3', name: 'Hail Mary Heroes', checked: false, favorite: false },
-        { id: '4', name: 'Blitz Brigade', checked: false, favorite: false },
-        { id: '5', name: 'Gridiron Gladiators', checked: false, favorite: false },
-        { id: '6', name: 'Fantasy Fieldmasters', checked: false, favorite: false },
+        { 
+          id: '1', 
+          name: 'Touchdown Titans', 
+          favorite: false,
+          platforms: [
+            { name: 'ESPN', available: true },
+            { name: 'Yahoo', available: true },
+            { name: 'Sleeper', available: false },
+            { name: 'NFL', available: true },
+          ]
+        },
+        { 
+          id: '2', 
+          name: 'Field Goal Phenoms', 
+          favorite: false,
+          platforms: [
+            { name: 'ESPN', available: true },
+            { name: 'Yahoo', available: true },
+            { name: 'Sleeper', available: true },
+            { name: 'NFL', available: true },
+          ]
+        },
+        { 
+          id: '3', 
+          name: 'Hail Mary Heroes', 
+          favorite: false,
+          platforms: [
+            { name: 'ESPN', available: true },
+            { name: 'Yahoo', available: false },
+            { name: 'Sleeper', available: true },
+            { name: 'NFL', available: true },
+          ]
+        },
+        { 
+          id: '4', 
+          name: 'Blitz Brigade', 
+          favorite: false,
+          platforms: [
+            { name: 'ESPN', available: true },
+            { name: 'Yahoo', available: true },
+            { name: 'Sleeper', available: true },
+            { name: 'NFL', available: false },
+          ]
+        },
+        { 
+          id: '5', 
+          name: 'Gridiron Gladiators', 
+          favorite: false,
+          platforms: [
+            { name: 'ESPN', available: false },
+            { name: 'Yahoo', available: true },
+            { name: 'Sleeper', available: true },
+            { name: 'NFL', available: true },
+          ]
+        },
+        { 
+          id: '6', 
+          name: 'Fantasy Fieldmasters', 
+          favorite: false,
+          platforms: [
+            { name: 'ESPN', available: true },
+            { name: 'Yahoo', available: true },
+            { name: 'Sleeper', available: true },
+            { name: 'NFL', available: true },
+          ]
+        },
       ];
       
       setSuggestions(mockSuggestions);
@@ -63,44 +122,57 @@ const AISuggestions: React.FC = () => {
     
     // Mock API call for custom prompt
     setTimeout(() => {
-      // Create custom suggestions based on prompt
+      // Create custom suggestions based on prompt with platform availability already checked
       const customSuggestions = [
-        { id: '7', name: `${prompt} Warriors`, checked: false, favorite: false },
-        { id: '8', name: `${prompt} Champions`, checked: false, favorite: false },
-        { id: '9', name: `Mighty ${prompt}`, checked: false, favorite: false },
-        { id: '10', name: `${prompt} Squad`, checked: false, favorite: false },
+        { 
+          id: '7', 
+          name: `${prompt} Warriors`, 
+          favorite: false,
+          platforms: [
+            { name: 'ESPN', available: true },
+            { name: 'Yahoo', available: true },
+            { name: 'Sleeper', available: true },
+            { name: 'NFL', available: true },
+          ]
+        },
+        { 
+          id: '8', 
+          name: `${prompt} Champions`, 
+          favorite: false,
+          platforms: [
+            { name: 'ESPN', available: true },
+            { name: 'Yahoo', available: true },
+            { name: 'Sleeper', available: false },
+            { name: 'NFL', available: true },
+          ]
+        },
+        { 
+          id: '9', 
+          name: `Mighty ${prompt}`, 
+          favorite: false,
+          platforms: [
+            { name: 'ESPN', available: true },
+            { name: 'Yahoo', available: false },
+            { name: 'Sleeper', available: true },
+            { name: 'NFL', available: true },
+          ]
+        },
+        { 
+          id: '10', 
+          name: `${prompt} Squad`, 
+          favorite: false,
+          platforms: [
+            { name: 'ESPN', available: true },
+            { name: 'Yahoo', available: true },
+            { name: 'Sleeper', available: true },
+            { name: 'NFL', available: true },
+          ]
+        },
       ];
       
       setSuggestions([...customSuggestions, ...suggestions].slice(0, 8));
       setIsLoading(false);
     }, 1500);
-  };
-
-  const checkAvailability = (id: string) => {
-    // Update the specific suggestion to show it's being checked
-    setSuggestions(suggestions.map(s => 
-      s.id === id ? { ...s, checking: true } : s
-    ));
-    
-    // Simulate availability check
-    setTimeout(() => {
-      setSuggestions(suggestions.map(s => {
-        if (s.id === id) {
-          return {
-            ...s,
-            checked: true,
-            checking: false,
-            platforms: [
-              { name: 'ESPN', available: Math.random() > 0.3 },
-              { name: 'Yahoo', available: Math.random() > 0.3 },
-              { name: 'Sleeper', available: Math.random() > 0.3 },
-              { name: 'NFL', available: Math.random() > 0.3 },
-            ]
-          };
-        }
-        return s;
-      }));
-    }, 1000);
   };
 
   const toggleFavorite = (id: string) => {
@@ -164,9 +236,7 @@ const AISuggestions: React.FC = () => {
                   key={suggestion.id}
                   name={suggestion.name}
                   platforms={suggestion.platforms}
-                  checked={suggestion.checked}
                   favorite={suggestion.favorite}
-                  onCheckAvailability={() => checkAvailability(suggestion.id)}
                   onReserve={() => handleReserve(suggestion.name)}
                   onToggleFavorite={() => toggleFavorite(suggestion.id)}
                 />
