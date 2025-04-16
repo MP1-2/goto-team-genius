@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Save, Edit, Check, CreditCard, LogOut } from 'lucide-react';
+import { ArrowLeft, Save, Edit, Check, CreditCard, LogOut, Copy } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import BottomNavigation from '@/components/layout/BottomNavigation';
 import { Label } from '@/components/ui/label';
@@ -56,6 +56,7 @@ const Profile: React.FC = () => {
   const [formData, setFormData] = useState(DEFAULT_USER);
   const [formInterests, setFormInterests] = useState(DEFAULT_INTERESTS);
   const [activeSection, setActiveSection] = useState('account-interests');
+  const [teamCodes, setTeamCodes] = useState<Record<string, { code: string, platforms: string[], isUsed: boolean, reservedAt: string }>>({});
   
   useEffect(() => {
     // Load user data from localStorage if available
@@ -80,6 +81,17 @@ const Profile: React.FC = () => {
         }
       } catch (error) {
         console.error('Error parsing user info:', error);
+      }
+    }
+
+    // Load team codes from localStorage
+    const teamCodesStr = localStorage.getItem('teamCodes');
+    if (teamCodesStr) {
+      try {
+        const codes = JSON.parse(teamCodesStr);
+        setTeamCodes(codes);
+      } catch (error) {
+        console.error('Error parsing team codes:', error);
       }
     }
   }, []);
@@ -120,6 +132,24 @@ const Profile: React.FC = () => {
         expiryDate: expiresAt
       } 
     });
+  };
+
+  const handleCopyCode = (teamName: string, code: string) => {
+    navigator.clipboard.writeText(code);
+    toast.success('Code copied to clipboard!');
+  };
+
+  const handleMarkAsUsed = (teamName: string) => {
+    // Update the team code as used
+    const updatedCodes = { ...teamCodes };
+    if (updatedCodes[teamName]) {
+      updatedCodes[teamName].isUsed = true;
+      setTeamCodes(updatedCodes);
+      
+      // Save to localStorage
+      localStorage.setItem('teamCodes', JSON.stringify(updatedCodes));
+      toast.success(`${teamName} code marked as used`);
+    }
   };
 
   const handleLogout = () => {
@@ -183,10 +213,17 @@ const Profile: React.FC = () => {
           </Button>
           <Button 
             variant={activeSection === 'subscriptions' ? 'default' : 'outline'}
-            className="flex-1 ml-2"
+            className="flex-1 mx-2"
             onClick={() => setActiveSection('subscriptions')}
           >
             Subscriptions
+          </Button>
+          <Button 
+            variant={activeSection === 'name-management' ? 'default' : 'outline'}
+            className="flex-1 ml-2"
+            onClick={() => setActiveSection('name-management')}
+          >
+            Name Management
           </Button>
         </div>
         
@@ -255,7 +292,7 @@ const Profile: React.FC = () => {
               </Button>
             )}
           </div>
-        ) : (
+        ) : activeSection === 'subscriptions' ? (
           <div className="space-y-4">
             {subscriptions.map((subscription) => (
               <Card key={subscription.id}>
@@ -294,6 +331,87 @@ const Profile: React.FC = () => {
                 </CardFooter>
               </Card>
             ))}
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Name Codes Management</CardTitle>
+                <CardDescription>
+                  Manage your unique codes for fantasy platforms
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {Object.keys(teamCodes).length > 0 ? (
+                  <div className="space-y-4">
+                    {Object.entries(teamCodes).map(([teamName, codeData]) => (
+                      <div key={teamName} className="border rounded-lg p-4">
+                        <h3 className="font-semibold text-lg mb-2">{teamName}</h3>
+                        
+                        <div className="grid grid-cols-2 gap-2 text-sm mb-3">
+                          <div className="text-muted-foreground">Reserved on:</div>
+                          <div className="font-medium">
+                            {new Date(codeData.reservedAt).toLocaleDateString()}
+                          </div>
+                          <div className="text-muted-foreground">Status:</div>
+                          <div className="flex items-center font-medium">
+                            <span className={`mr-2 h-2 w-2 rounded-full ${codeData.isUsed ? 'bg-amber-500' : 'bg-green-500'}`}></span>
+                            {codeData.isUsed ? 'Used' : 'Available'}
+                          </div>
+                        </div>
+                        
+                        <div className="mb-3">
+                          <h4 className="text-sm font-medium mb-1">Platforms:</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {codeData.platforms.map(platform => (
+                              <div key={platform} className="text-xs px-2 py-1 bg-secondary/50 rounded">
+                                {platform}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        <div className="mb-2">
+                          <h4 className="text-sm font-medium mb-1">Unique Code:</h4>
+                          <div className="flex items-center justify-between p-2 bg-muted rounded-md">
+                            <div className="font-mono text-sm">
+                              {codeData.isUsed ? 
+                                "Code is in use" : 
+                                `${codeData.code.substring(0, 2)}•••••••••••••`}
+                            </div>
+                            {!codeData.isUsed && (
+                              <div className="flex gap-2">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  onClick={() => handleCopyCode(teamName, codeData.code)}
+                                  className="gap-1.5"
+                                >
+                                  <Copy className="h-3.5 w-3.5" />
+                                  Copy
+                                </Button>
+                                <Button 
+                                  variant="secondary" 
+                                  size="sm"
+                                  onClick={() => handleMarkAsUsed(teamName)}
+                                >
+                                  <Check className="h-3.5 w-3.5 mr-1" />
+                                  Mark as Used
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    No team name codes available yet. Reserve a team name to get started.
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
         )}
       </div>
