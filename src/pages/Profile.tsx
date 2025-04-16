@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { ArrowLeft, Save, Edit, Check, CreditCard } from 'lucide-react';
+import { ArrowLeft, Save, Edit, Check, CreditCard, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import BottomNavigation from '@/components/layout/BottomNavigation';
 import { Label } from '@/components/ui/label';
@@ -9,7 +8,6 @@ import { toast } from 'sonner';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-// Mock data - in a real app this would come from an API
 const MOCK_USER = {
   name: 'John Doe',
   email: 'john.doe@example.com',
@@ -68,6 +66,10 @@ const Profile: React.FC = () => {
     });
   };
 
+  const handleLogout = () => {
+    navigate('/');
+  };
+
   return (
     <div className="min-h-screen bg-background pb-20">
       <div className="sticky top-0 z-10 bg-background">
@@ -82,23 +84,32 @@ const Profile: React.FC = () => {
             </Button>
             <h1 className="ml-2 text-lg font-semibold">Profile</h1>
           </div>
-          {editing ? (
+          <div className="flex items-center space-x-2">
+            {editing ? (
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={handleSave}
+              >
+                <Save className="h-5 w-5" />
+              </Button>
+            ) : (
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => setEditing(true)}
+              >
+                <Edit className="h-5 w-5" />
+              </Button>
+            )}
             <Button 
               variant="ghost" 
               size="icon"
-              onClick={handleSave}
+              onClick={handleLogout}
             >
-              <Save className="h-5 w-5" />
+              <LogOut className="h-5 w-5" />
             </Button>
-          ) : (
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => setEditing(true)}
-            >
-              <Edit className="h-5 w-5" />
-            </Button>
-          )}
+          </div>
         </div>
       </div>
 
