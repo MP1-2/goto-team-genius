@@ -8,7 +8,6 @@ import BottomNavigation from '@/components/layout/BottomNavigation';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import InterestsSection from '@/components/profile/InterestsSection';
 
 const DEFAULT_USER = {
@@ -56,6 +55,7 @@ const Profile: React.FC = () => {
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState(DEFAULT_USER);
   const [formInterests, setFormInterests] = useState(DEFAULT_INTERESTS);
+  const [activeSection, setActiveSection] = useState('account-interests');
   
   useEffect(() => {
     // Load user data from localStorage if available
@@ -173,68 +173,76 @@ const Profile: React.FC = () => {
       </div>
 
       <div className="px-6 py-6">
-        <Tabs defaultValue="account">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="account">Account</TabsTrigger>
-            <TabsTrigger value="interests">Interests</TabsTrigger>
-            <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="account" className="mt-6">
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                {editing ? (
-                  <Input
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                  />
-                ) : (
-                  <div className="rounded-md border px-3 py-2">{user.name}</div>
-                )}
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                {editing ? (
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                  />
-                ) : (
-                  <div className="rounded-md border px-3 py-2">{user.email}</div>
-                )}
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                {editing ? (
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                  />
-                ) : (
-                  <div className="rounded-md border px-3 py-2">{user.password}</div>
-                )}
-              </div>
-              
-              {editing && (
-                <Button className="w-full mt-4" onClick={handleSave}>
-                  Save Changes
-                </Button>
-              )}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="interests" className="mt-6">
+        <div className="flex justify-between mb-4">
+          <Button 
+            variant={activeSection === 'account-interests' ? 'default' : 'outline'}
+            className="flex-1 mr-2"
+            onClick={() => setActiveSection('account-interests')}
+          >
+            Account & Interests
+          </Button>
+          <Button 
+            variant={activeSection === 'subscriptions' ? 'default' : 'outline'}
+            className="flex-1 ml-2"
+            onClick={() => setActiveSection('subscriptions')}
+          >
+            Subscriptions
+          </Button>
+        </div>
+        
+        {activeSection === 'account-interests' ? (
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Account Information</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Name</Label>
+                  {editing ? (
+                    <Input
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                    />
+                  ) : (
+                    <div className="rounded-md border px-3 py-2">{user.name}</div>
+                  )}
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  {editing ? (
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                    />
+                  ) : (
+                    <div className="rounded-md border px-3 py-2">{user.email}</div>
+                  )}
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  {editing ? (
+                    <Input
+                      id="password"
+                      name="password"
+                      type="password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                    />
+                  ) : (
+                    <div className="rounded-md border px-3 py-2">{user.password}</div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+            
             <InterestsSection 
               interests={editing ? formInterests : interests}
               onInterestChange={setFormInterests}
@@ -246,50 +254,48 @@ const Profile: React.FC = () => {
                 Save Changes
               </Button>
             )}
-          </TabsContent>
-          
-          <TabsContent value="subscriptions" className="mt-6">
-            <div className="space-y-4">
-              {subscriptions.map((subscription) => (
-                <Card key={subscription.id}>
-                  <CardHeader className="pb-2">
-                    <CardTitle>{subscription.teamName}</CardTitle>
-                    <CardDescription>
-                      Reserved on {new Date(subscription.purchasedAt).toLocaleDateString()}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pb-2">
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div className="text-muted-foreground">Status:</div>
-                      <div className="flex items-center font-medium">
-                        <span className="mr-2 h-2 w-2 rounded-full bg-green-500"></span>
-                        {subscription.status}
-                      </div>
-                      <div className="text-muted-foreground">Expires:</div>
-                      <div className="font-medium">
-                        {new Date(subscription.expiresAt).toLocaleDateString()}
-                      </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {subscriptions.map((subscription) => (
+              <Card key={subscription.id}>
+                <CardHeader className="pb-2">
+                  <CardTitle>{subscription.teamName}</CardTitle>
+                  <CardDescription>
+                    Reserved on {new Date(subscription.purchasedAt).toLocaleDateString()}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="pb-2">
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="text-muted-foreground">Status:</div>
+                    <div className="flex items-center font-medium">
+                      <span className="mr-2 h-2 w-2 rounded-full bg-green-500"></span>
+                      {subscription.status}
                     </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button 
-                      className="w-full" 
-                      size="sm"
-                      onClick={() => handleExtendSubscription(
-                        subscription.id, 
-                        subscription.teamName,
-                        subscription.expiresAt
-                      )}
-                    >
-                      <CreditCard className="mr-2 h-4 w-4" />
-                      Extend Reservation
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-        </Tabs>
+                    <div className="text-muted-foreground">Expires:</div>
+                    <div className="font-medium">
+                      {new Date(subscription.expiresAt).toLocaleDateString()}
+                    </div>
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button 
+                    className="w-full" 
+                    size="sm"
+                    onClick={() => handleExtendSubscription(
+                      subscription.id, 
+                      subscription.teamName,
+                      subscription.expiresAt
+                    )}
+                  >
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Extend Reservation
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
 
       <BottomNavigation />
