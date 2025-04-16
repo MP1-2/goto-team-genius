@@ -19,7 +19,7 @@ const Favorites: React.FC = () => {
   const [favorites, setFavorites] = useState(INITIAL_FAVORITES);
 
   const handleCheckAvailability = (name: string) => {
-    navigate('/search', { state: { searchTerm: name } });
+    navigate('/search', { state: { searchQuery: name } });
   };
 
   const handleRemoveFavorite = (id: string) => {

@@ -1,14 +1,15 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import PlatformAvailability from '@/components/shared/PlatformAvailability';
 import { toast } from 'sonner';
 
 const TeamNameSearch: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResult, setSearchResult] = useState<{
     name: string;
@@ -16,8 +17,24 @@ const TeamNameSearch: React.FC = () => {
   } | null>(null);
   const [isSearching, setIsSearching] = useState(false);
 
-  const handleSearch = () => {
-    if (!searchQuery.trim()) {
+  // Check for pre-populated search query from location state
+  useEffect(() => {
+    const state = location.state as { searchQuery?: string; searchTerm?: string } | null;
+    
+    if (state) {
+      // Handle both possible property names for backward compatibility
+      const query = state.searchQuery || state.searchTerm;
+      
+      if (query) {
+        setSearchQuery(query);
+        // Auto-search when arriving with a pre-populated query
+        handleSearch(query);
+      }
+    }
+  }, [location.state]);
+
+  const handleSearch = (query: string = searchQuery) => {
+    if (!query.trim()) {
       toast.error('Please enter a team name to search');
       return;
     }
@@ -28,7 +45,7 @@ const TeamNameSearch: React.FC = () => {
     setTimeout(() => {
       // For demo, generate random availability
       const result = {
-        name: searchQuery,
+        name: query,
         platforms: [
           { name: 'ESPN', available: Math.random() > 0.5 },
           { name: 'Yahoo', available: Math.random() > 0.5 },
@@ -72,7 +89,7 @@ const TeamNameSearch: React.FC = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
           />
-          <Button onClick={handleSearch} disabled={isSearching}>
+          <Button onClick={() => handleSearch()} disabled={isSearching}>
             {isSearching ? (
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
             ) : (
