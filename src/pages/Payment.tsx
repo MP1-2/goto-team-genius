@@ -51,7 +51,8 @@ const Payment: React.FC = () => {
       if (isExtension) {
         navigate('/profile', { state: { tab: 'subscriptions' } });
       } else {
-        navigate('/logo', { state: { teamName } });
+        // Redirect to the reservation success page instead of logo creation
+        navigate('/reservation-success', { state: { teamName } });
       }
     }, 2000);
   };
