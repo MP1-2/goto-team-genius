@@ -62,7 +62,7 @@ const Reservation: React.FC = () => {
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <h1 className="ml-2 text-lg font-semibold">Team Name Reservation</h1>
+          <h1 className="ml-2 text-lg font-semibold">{teamName} Reservation</h1>
         </div>
       </div>
 

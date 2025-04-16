@@ -5,12 +5,14 @@ import {
   CheckCircle,
   ArrowRight,
   DollarSign,
+  AlertCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { toast } from 'sonner';
 
 interface PaymentScreenProps {
@@ -21,19 +23,27 @@ interface PaymentScreenProps {
 
 type PaymentMethod = 'credit_card' | 'paypal' | 'stripe' | 'venmo';
 
+type PaymentStatus = 'idle' | 'processing' | 'success' | 'failed';
+
 const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCancel }) => {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('credit_card');
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>('idle');
   const [showCardDetails, setShowCardDetails] = useState(false);
+  const [showExternalPayment, setShowExternalPayment] = useState(false);
   const [formData, setFormData] = useState({
     cardNumber: '',
     expiryDate: '',
     cvv: '',
-    nameOnCard: ''
+    nameOnCard: '',
+    email: '',
+    // For PayPal, Stripe, Venmo
+    accountId: ''
   });
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handlePaymentMethodChange = (value: PaymentMethod) => {
     setPaymentMethod(value);
+    setErrorMessage(null);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,15 +58,45 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
     if (paymentMethod === 'credit_card') {
       setShowCardDetails(true);
     } else {
-      // For other payment methods, simulate redirect to external provider
-      setIsProcessing(true);
-      toast.success(`Redirecting to ${getPaymentMethodName(paymentMethod)}...`);
-      
-      // Simulate payment processing
-      setTimeout(() => {
-        setIsProcessing(false);
-        onSuccess();
-      }, 2000);
+      // For other payment methods, show external payment dialog
+      setShowExternalPayment(true);
+    }
+  };
+
+  const simulatePaymentProcessing = (shouldSucceed: boolean = true) => {
+    setPaymentStatus('processing');
+    setErrorMessage(null);
+    
+    // Simulate payment processing
+    setTimeout(() => {
+      if (shouldSucceed) {
+        setPaymentStatus('success');
+        
+        // Simulate redirect back from external provider or process completion
+        setTimeout(() => {
+          setShowCardDetails(false);
+          setShowExternalPayment(false);
+          onSuccess();
+        }, 1500);
+      } else {
+        setPaymentStatus('failed');
+        setErrorMessage(getErrorMessageForMethod(paymentMethod));
+      }
+    }, 2000);
+  };
+
+  const getErrorMessageForMethod = (method: PaymentMethod): string => {
+    switch (method) {
+      case 'credit_card':
+        return 'Card declined. Please check your card details or try another card.';
+      case 'paypal':
+        return 'PayPal transaction failed. Please ensure your account has sufficient funds.';
+      case 'stripe':
+        return 'Payment processing error. Please try again or use a different payment method.';
+      case 'venmo':
+        return 'Unable to complete Venmo transaction. Please verify your account information.';
+      default:
+        return 'Payment failed. Please try again.';
     }
   };
 
@@ -65,19 +105,55 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
     
     // Basic validation
     if (!formData.cardNumber || !formData.expiryDate || !formData.cvv || !formData.nameOnCard) {
-      toast.error('Please fill in all card details');
+      setErrorMessage('Please fill in all card details');
       return;
     }
     
-    // Simulate card processing
-    setIsProcessing(true);
-    toast.success('Processing payment...');
+    // Card number validation (simplified)
+    if (formData.cardNumber.length < 15 || formData.cardNumber.length > 16) {
+      setErrorMessage('Please enter a valid card number');
+      return;
+    }
     
-    setTimeout(() => {
-      setIsProcessing(false);
-      setShowCardDetails(false);
-      onSuccess();
-    }, 2000);
+    // CVV validation
+    if (formData.cvv.length < 3 || formData.cvv.length > 4) {
+      setErrorMessage('Please enter a valid CVV');
+      return;
+    }
+
+    // Expiry date validation (MM/YY format)
+    const expiryRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
+    if (!expiryRegex.test(formData.expiryDate)) {
+      setErrorMessage('Please enter a valid expiry date (MM/YY)');
+      return;
+    }
+    
+    // Randomly decide if payment should succeed (90% success rate for demo)
+    const shouldSucceed = Math.random() > 0.1;
+    simulatePaymentProcessing(shouldSucceed);
+  };
+
+  const handleExternalPaymentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.email) {
+      setErrorMessage('Please enter your email address');
+      return;
+    }
+    
+    if (paymentMethod === 'venmo' && !formData.accountId) {
+      setErrorMessage('Please enter your Venmo username');
+      return;
+    }
+    
+    if (paymentMethod === 'paypal' && !formData.accountId) {
+      setErrorMessage('Please enter your PayPal email or phone');
+      return;
+    }
+    
+    // Randomly decide if payment should succeed (90% success rate for demo)
+    const shouldSucceed = Math.random() > 0.1;
+    simulatePaymentProcessing(shouldSucceed);
   };
 
   const getPaymentMethodName = (method: PaymentMethod): string => {
@@ -176,9 +252,9 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
           <Button
             className="w-full"
             onClick={handleProceed}
-            disabled={isProcessing}
+            disabled={paymentStatus === 'processing'}
           >
-            {isProcessing ? (
+            {paymentStatus === 'processing' ? (
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
             ) : (
               <>
@@ -191,7 +267,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
             variant="outline" 
             className="w-full" 
             onClick={onCancel}
-            disabled={isProcessing}
+            disabled={paymentStatus === 'processing'}
           >
             Cancel
           </Button>
@@ -208,6 +284,13 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmitCardDetails} className="space-y-4">
+            {errorMessage && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{errorMessage}</AlertDescription>
+              </Alert>
+            )}
             <div className="space-y-2">
               <label htmlFor="nameOnCard" className="text-sm font-medium">Name on Card</label>
               <Input 
@@ -250,10 +333,34 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
                 />
               </div>
             </div>
+            
+            {paymentStatus === 'success' && (
+              <Alert className="bg-green-50 border-green-200">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <AlertTitle className="text-green-600">Payment Successful</AlertTitle>
+                <AlertDescription className="text-green-600">
+                  Your payment has been processed successfully.
+                </AlertDescription>
+              </Alert>
+            )}
+            
+            {paymentStatus === 'failed' && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Payment Failed</AlertTitle>
+                <AlertDescription>{errorMessage}</AlertDescription>
+              </Alert>
+            )}
+            
             <div className="flex flex-col gap-2 pt-4">
-              <Button type="submit" disabled={isProcessing}>
-                {isProcessing ? (
+              <Button type="submit" disabled={paymentStatus === 'processing' || paymentStatus === 'success'}>
+                {paymentStatus === 'processing' ? (
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                ) : paymentStatus === 'success' ? (
+                  <>
+                    Payment Successful
+                    <CheckCircle className="ml-2 h-4 w-4" />
+                  </>
                 ) : (
                   <>
                     Pay $9.99
@@ -265,7 +372,122 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
                 type="button" 
                 variant="outline" 
                 onClick={() => setShowCardDetails(false)}
-                disabled={isProcessing}
+                disabled={paymentStatus === 'processing'}
+              >
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+      
+      {/* External Payment Dialog (PayPal, Stripe, Venmo) */}
+      <Dialog open={showExternalPayment} onOpenChange={setShowExternalPayment}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{getPaymentMethodName(paymentMethod)} Payment</DialogTitle>
+            <DialogDescription>
+              Complete your {getPaymentMethodName(paymentMethod)} payment
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleExternalPaymentSubmit} className="space-y-4">
+            {errorMessage && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{errorMessage}</AlertDescription>
+              </Alert>
+            )}
+            
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-sm font-medium">Your Email</label>
+              <Input 
+                id="email" 
+                name="email" 
+                type="email"
+                placeholder="your-email@example.com" 
+                value={formData.email}
+                onChange={handleInputChange}
+              />
+            </div>
+            
+            {paymentMethod === 'paypal' && (
+              <div className="space-y-2">
+                <label htmlFor="accountId" className="text-sm font-medium">PayPal Email or Phone</label>
+                <Input 
+                  id="accountId" 
+                  name="accountId"
+                  placeholder="your-paypal@example.com or phone" 
+                  value={formData.accountId}
+                  onChange={handleInputChange}
+                />
+              </div>
+            )}
+            
+            {paymentMethod === 'venmo' && (
+              <div className="space-y-2">
+                <label htmlFor="accountId" className="text-sm font-medium">Venmo Username</label>
+                <Input 
+                  id="accountId" 
+                  name="accountId"
+                  placeholder="@username" 
+                  value={formData.accountId}
+                  onChange={handleInputChange}
+                />
+              </div>
+            )}
+            
+            {paymentStatus === 'success' && (
+              <Alert className="bg-green-50 border-green-200">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <AlertTitle className="text-green-600">Payment Successful</AlertTitle>
+                <AlertDescription className="text-green-600">
+                  Your {getPaymentMethodName(paymentMethod)} payment has been processed successfully.
+                </AlertDescription>
+              </Alert>
+            )}
+            
+            {paymentStatus === 'failed' && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Payment Failed</AlertTitle>
+                <AlertDescription>{errorMessage}</AlertDescription>
+              </Alert>
+            )}
+            
+            {paymentMethod === 'stripe' && paymentStatus === 'idle' && (
+              <Alert>
+                <AlertTitle>Stripe Payment</AlertTitle>
+                <AlertDescription>
+                  You'll be redirected to Stripe's secure payment page after clicking "Continue".
+                </AlertDescription>
+              </Alert>
+            )}
+            
+            <div className="flex flex-col gap-2 pt-4">
+              <Button 
+                type="submit" 
+                disabled={paymentStatus === 'processing' || paymentStatus === 'success'}
+              >
+                {paymentStatus === 'processing' ? (
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                ) : paymentStatus === 'success' ? (
+                  <>
+                    Payment Successful
+                    <CheckCircle className="ml-2 h-4 w-4" />
+                  </>
+                ) : (
+                  <>
+                    {paymentMethod === 'stripe' ? 'Continue to Stripe' : `Pay with ${getPaymentMethodName(paymentMethod)}`}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => setShowExternalPayment(false)}
+                disabled={paymentStatus === 'processing'}
               >
                 Cancel
               </Button>
