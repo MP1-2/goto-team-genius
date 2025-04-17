@@ -5,25 +5,28 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-// Mock blog posts
+// Mock blog posts with images
 const BLOG_POSTS = [
   {
     id: '1',
     title: 'Top Fantasy Football Draft Strategies for 2025',
     excerpt: 'Learn the secrets to dominating your fantasy football league this season.',
     date: 'April 15, 2025',
+    image: 'https://images.unsplash.com/photo-1508098682722-e99c643e7f76?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
   },
   {
     id: '2',
     title: 'How to Pick the Perfect Fantasy Basketball Team',
     excerpt: 'Expert tips on building a championship-caliber fantasy basketball roster.',
     date: 'April 10, 2025',
+    image: 'https://images.unsplash.com/photo-1546519638-68e109acd27d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
   },
   {
     id: '3',
     title: 'Fantasy Baseball: Undervalued Players to Target',
     excerpt: 'Discover hidden gems who could be the key to your fantasy baseball success.',
     date: 'April 5, 2025',
+    image: 'https://images.unsplash.com/photo-1554143091-c41d76e3da15?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
   },
 ];
 
@@ -55,6 +58,13 @@ const BlogsSection: React.FC<BlogsSectionProps> = ({ blogsRef }) => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {BLOG_POSTS.map((post) => (
             <Card key={post.id} className="overflow-hidden hover:shadow-md transition-all">
+              <div className="aspect-video w-full overflow-hidden">
+                <img 
+                  src={post.image} 
+                  alt={post.title}
+                  className="w-full h-full object-cover transition-all hover:scale-105"
+                />
+              </div>
               <CardContent className="p-6">
                 <div className="space-y-4">
                   <div className="text-sm text-muted-foreground">{post.date}</div>
