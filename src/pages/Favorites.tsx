@@ -1,12 +1,10 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Heart } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import BottomNavigation from '@/components/layout/BottomNavigation';
 import { toast } from 'sonner';
 
-// Mock data - in a real app this would come from an API or local storage
 const INITIAL_FAVORITES = [
   { id: '1', name: 'Thunder Dragons' },
   { id: '2', name: 'Lightning Eagles' },
@@ -35,7 +33,7 @@ const Favorites: React.FC = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate('/home')}
+            onClick={() => navigate('/portal')}
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
