@@ -2,10 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, ArrowLeft } from 'lucide-react';
+import { Search, ArrowLeft, Clock, Heart } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PlatformAvailability from '@/components/shared/PlatformAvailability';
 import { toast } from 'sonner';
+import { Card, CardContent } from '@/components/ui/card';
 
 const TeamNameSearch: React.FC = () => {
   const navigate = useNavigate();
@@ -16,6 +17,14 @@ const TeamNameSearch: React.FC = () => {
     platforms: { name: string; available: boolean }[];
   } | null>(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [showRecentSearches, setShowRecentSearches] = useState(false);
+
+  // Mock data for recently searched names
+  const recentSearches = [
+    { id: '1', name: 'Touchdown Titans', searchedAt: '2025-04-15T10:30:00Z' },
+    { id: '2', name: 'Hoop Dreams', searchedAt: '2025-04-14T14:45:00Z' },
+    { id: '3', name: 'Diamond Dynamos', searchedAt: '2025-04-13T09:15:00Z' },
+  ];
 
   // Check for pre-populated search query from location state
   useEffect(() => {
@@ -33,6 +42,15 @@ const TeamNameSearch: React.FC = () => {
     }
   }, [location.state]);
 
+  // Show recent searches when user types and hasn't submitted yet
+  useEffect(() => {
+    if (searchQuery.trim() && !searchResult && !isSearching) {
+      setShowRecentSearches(true);
+    } else if (!searchQuery.trim() || searchResult || isSearching) {
+      setShowRecentSearches(false);
+    }
+  }, [searchQuery, searchResult, isSearching]);
+
   const handleSearch = (query: string = searchQuery) => {
     if (!query.trim()) {
       toast.error('Please enter a team name to search');
@@ -40,6 +58,7 @@ const TeamNameSearch: React.FC = () => {
     }
     
     setIsSearching(true);
+    setShowRecentSearches(false);
     
     // Simulate API call
     setTimeout(() => {
@@ -57,6 +76,11 @@ const TeamNameSearch: React.FC = () => {
       setSearchResult(result);
       setIsSearching(false);
     }, 1500);
+  };
+
+  const handleRecentSearchClick = (name: string) => {
+    setSearchQuery(name);
+    handleSearch(name);
   };
 
   const handleReserve = () => {
@@ -97,6 +121,36 @@ const TeamNameSearch: React.FC = () => {
             )}
           </Button>
         </div>
+
+        {/* Recent Searches (shown only when typing and not searching) */}
+        {showRecentSearches && (
+          <div className="mt-4 space-y-2 animate-in fade-in duration-200">
+            <p className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+              <Clock className="h-3.5 w-3.5" />
+              Recent Searches
+            </p>
+            {recentSearches.map((search) => (
+              <Card 
+                key={search.id} 
+                className="hover:bg-muted/50 transition-colors cursor-pointer"
+                onClick={() => handleRecentSearchClick(search.name)}
+              >
+                <CardContent className="p-3 flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <span>{search.name}</span>
+                  </div>
+                  <Button variant="ghost" size="icon" onClick={(e) => {
+                    e.stopPropagation();
+                    navigate('/favorites');
+                  }}>
+                    <Heart className="h-4 w-4" />
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
 
         {/* Search Result */}
         {searchResult && (

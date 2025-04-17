@@ -3,8 +3,10 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Search, Wand, Image, Clock, User, Heart } from 'lucide-react';
+import { Search, Wand, Image, Clock, User, Heart, Award, Newspaper } from 'lucide-react';
 import BottomNavigation from '@/components/layout/BottomNavigation';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const UserPortal: React.FC = () => {
   const navigate = useNavigate();
@@ -12,11 +14,27 @@ const UserPortal: React.FC = () => {
     ? JSON.parse(localStorage.getItem('userInfo') || '{}') 
     : { name: 'User' };
 
-  // Mock data for recently searched names
-  const recentSearches = [
-    { id: '1', name: 'Touchdown Titans', searchedAt: '2025-04-15T10:30:00Z' },
-    { id: '2', name: 'Hoop Dreams', searchedAt: '2025-04-14T14:45:00Z' },
-    { id: '3', name: 'Diamond Dynamos', searchedAt: '2025-04-13T09:15:00Z' },
+  // Mock data for player rankings
+  const topPlayers = [
+    { id: '1', name: 'Christian McCaffrey', position: 'RB', team: 'SF', score: 97 },
+    { id: '2', name: 'Patrick Mahomes', position: 'QB', team: 'KC', score: 95 },
+    { id: '3', name: 'Justin Jefferson', position: 'WR', team: 'MIN', score: 94 },
+  ];
+
+  // Mock data for blog posts
+  const recentBlogs = [
+    { 
+      id: '1', 
+      title: 'Top Fantasy Football Draft Strategies', 
+      date: 'April 15, 2025',
+      image: 'https://images.unsplash.com/photo-1508098682722-e99c643e7f76?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60'
+    },
+    { 
+      id: '2', 
+      title: 'Basketball Players to Watch This Season', 
+      date: 'April 10, 2025',
+      image: 'https://images.unsplash.com/photo-1546519638-68e109acd27d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60'
+    },
   ];
 
   return (
@@ -68,50 +86,79 @@ const UserPortal: React.FC = () => {
           </Card>
         </section>
 
-        {/* Recently Searched Names */}
+        {/* Top Players Rankings */}
         <section>
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-lg font-semibold">Recently Searched</h2>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/search')}>
+            <div className="flex items-center gap-2">
+              <Award className="h-5 w-5 text-primary" />
+              <h2 className="text-lg font-semibold">Top Players</h2>
+            </div>
+            <Button variant="ghost" size="sm" onClick={() => navigate('/rankings')}>
               View All
             </Button>
           </div>
-          <div className="space-y-2">
-            {recentSearches.map((search) => (
-              <Card key={search.id} className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => navigate('/search', { state: { searchQuery: search.name } })}>
-                <CardContent className="p-4 flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span>{search.name}</span>
+          <Card>
+            <CardContent className="p-3">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-12">Rank</TableHead>
+                    <TableHead>Player</TableHead>
+                    <TableHead>Position</TableHead>
+                    <TableHead>Team</TableHead>
+                    <TableHead className="text-right">Score</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {topPlayers.map((player, index) => (
+                    <TableRow key={player.id} className="hover:bg-muted/50">
+                      <TableCell className="font-medium">{index + 1}</TableCell>
+                      <TableCell>{player.name}</TableCell>
+                      <TableCell>{player.position}</TableCell>
+                      <TableCell>{player.team}</TableCell>
+                      <TableCell className="text-right font-semibold text-primary">{player.score}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* Latest Blogs */}
+        <section>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Newspaper className="h-5 w-5 text-primary" />
+              <h2 className="text-lg font-semibold">Latest Articles</h2>
+            </div>
+            <Button variant="ghost" size="sm" onClick={() => navigate('/blogs')}>
+              View All
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {recentBlogs.map((blog) => (
+              <Card key={blog.id} className="overflow-hidden hover:shadow-md transition-all cursor-pointer" onClick={() => navigate(`/blogs/${blog.id}`)}>
+                <div className="aspect-video w-full overflow-hidden">
+                  <img 
+                    src={blog.image} 
+                    alt={blog.title}
+                    className="w-full h-full object-cover transition-all hover:scale-105"
+                    onError={(e) => {
+                      // Fallback to a default sports image if the original fails to load
+                      const target = e.target as HTMLImageElement;
+                      target.src = "https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60";
+                    }}
+                  />
+                </div>
+                <CardContent className="p-4">
+                  <div className="space-y-2">
+                    <div className="text-sm text-muted-foreground">{blog.date}</div>
+                    <h3 className="font-semibold">{blog.title}</h3>
                   </div>
-                  <Button variant="ghost" size="icon" onClick={(e) => {
-                    e.stopPropagation();
-                    navigate('/favorites');
-                  }}>
-                    <Heart className="h-4 w-4" />
-                  </Button>
                 </CardContent>
               </Card>
             ))}
-          </div>
-        </section>
-
-        {/* Suggested Categories */}
-        <section>
-          <h2 className="text-lg font-semibold mb-2">Suggested Categories</h2>
-          <div className="grid grid-cols-2 gap-3">
-            <Button className="bg-blue-100 text-blue-800 hover:bg-blue-200 justify-start" variant="ghost" onClick={() => navigate('/search', { state: { category: 'football' } })}>
-              Football
-            </Button>
-            <Button className="bg-green-100 text-green-800 hover:bg-green-200 justify-start" variant="ghost" onClick={() => navigate('/search', { state: { category: 'basketball' } })}>
-              Basketball
-            </Button>
-            <Button className="bg-red-100 text-red-800 hover:bg-red-200 justify-start" variant="ghost" onClick={() => navigate('/search', { state: { category: 'baseball' } })}>
-              Baseball
-            </Button>
-            <Button className="bg-purple-100 text-purple-800 hover:bg-purple-200 justify-start" variant="ghost" onClick={() => navigate('/search', { state: { category: 'hockey' } })}>
-              Hockey
-            </Button>
           </div>
         </section>
       </main>
