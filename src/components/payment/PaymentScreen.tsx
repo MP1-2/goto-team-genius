@@ -6,6 +6,8 @@ import {
   ArrowRight,
   DollarSign,
   AlertCircle,
+  Smartphone,
+  Phone,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -14,6 +16,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { toast } from 'sonner';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 
 interface PaymentScreenProps {
   teamName: string;
@@ -21,25 +25,53 @@ interface PaymentScreenProps {
   onCancel: () => void;
 }
 
-type PaymentMethod = 'credit_card' | 'paypal' | 'stripe' | 'venmo';
+type PaymentMethod = 'credit_card' | 'paypal' | 'google_pay';
 
 type PaymentStatus = 'idle' | 'processing' | 'success' | 'failed';
+
+type VerificationMethod = 'sms' | 'call';
 
 const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCancel }) => {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('credit_card');
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>('idle');
   const [showCardDetails, setShowCardDetails] = useState(false);
   const [showExternalPayment, setShowExternalPayment] = useState(false);
+  const [showVerificationDialog, setShowVerificationDialog] = useState(false);
+  const [showOtpDialog, setShowOtpDialog] = useState(false);
+  const [showGooglePayDialog, setShowGooglePayDialog] = useState(false);
+  const [verificationMethod, setVerificationMethod] = useState<VerificationMethod>('sms');
+  const [otpValue, setOtpValue] = useState('');
+  const [selectedGoogleAccount, setSelectedGoogleAccount] = useState(0);
+  const [selectedCard, setSelectedCard] = useState(0);
   const [formData, setFormData] = useState({
     cardNumber: '',
     expiryDate: '',
     cvv: '',
     nameOnCard: '',
     email: '',
-    // For PayPal, Stripe, Venmo
+    phone: '',
+    // For PayPal, Google Pay
     accountId: ''
   });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const googleAccounts = [
+    {
+      email: 'tmna2002@gmail.com',
+      name: 'Nhat Anh Tran Minh',
+      cards: [
+        { type: 'Mastercard', lastFour: '0000' },
+        { type: 'Visa', lastFour: '4242' }
+      ]
+    },
+    {
+      email: 'user@example.com',
+      name: 'Example User',
+      cards: [
+        { type: 'Visa', lastFour: '1234' }
+      ]
+    }
+  ];
 
   const handlePaymentMethodChange = (value: PaymentMethod) => {
     setPaymentMethod(value);
@@ -57,8 +89,10 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
   const handleProceed = () => {
     if (paymentMethod === 'credit_card') {
       setShowCardDetails(true);
+    } else if (paymentMethod === 'google_pay') {
+      setShowGooglePayDialog(true);
     } else {
-      // For other payment methods, show external payment dialog
+      // For PayPal, show external payment dialog
       setShowExternalPayment(true);
     }
   };
@@ -76,7 +110,11 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
         setTimeout(() => {
           setShowCardDetails(false);
           setShowExternalPayment(false);
+          setShowVerificationDialog(false);
+          setShowOtpDialog(false);
+          setShowGooglePayDialog(false);
           onSuccess();
+          toast.success('Payment successful!');
         }, 1500);
       } else {
         setPaymentStatus('failed');
@@ -91,10 +129,8 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
         return 'Card declined. Please check your card details or try another card.';
       case 'paypal':
         return 'PayPal transaction failed. Please ensure your account has sufficient funds.';
-      case 'stripe':
-        return 'Payment processing error. Please try again or use a different payment method.';
-      case 'venmo':
-        return 'Unable to complete Venmo transaction. Please verify your account information.';
+      case 'google_pay':
+        return 'Google Pay transaction failed. Please try again or use a different payment method.';
       default:
         return 'Payment failed. Please try again.';
     }
@@ -127,6 +163,36 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
       setErrorMessage('Please enter a valid expiry date (MM/YY)');
       return;
     }
+
+    // Phone number validation for verification
+    if (!formData.phone) {
+      setErrorMessage('Please enter your phone number for verification');
+      return;
+    }
+    
+    // Move to verification instead of direct payment
+    setShowCardDetails(false);
+    setShowVerificationDialog(true);
+  };
+
+  const handleVerificationMethodSelect = (method: VerificationMethod) => {
+    setVerificationMethod(method);
+    
+    // Simulate sending verification code
+    toast.info(`Verification code ${method === 'sms' ? 'sent via SMS' : 'will be sent via phone call'} to ${formData.phone}`);
+    
+    // Move to OTP input
+    setShowVerificationDialog(false);
+    setShowOtpDialog(true);
+  };
+
+  const handleOtpSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (otpValue.length < 6) {
+      setErrorMessage('Please enter the complete verification code');
+      return;
+    }
     
     // Randomly decide if payment should succeed (90% success rate for demo)
     const shouldSucceed = Math.random() > 0.1;
@@ -141,11 +207,6 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
       return;
     }
     
-    if (paymentMethod === 'venmo' && !formData.accountId) {
-      setErrorMessage('Please enter your Venmo username');
-      return;
-    }
-    
     if (paymentMethod === 'paypal' && !formData.accountId) {
       setErrorMessage('Please enter your PayPal email or phone');
       return;
@@ -156,12 +217,17 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
     simulatePaymentProcessing(shouldSucceed);
   };
 
+  const handleGooglePaySubmit = () => {
+    // Randomly decide if payment should succeed (90% success rate for demo)
+    const shouldSucceed = Math.random() > 0.1;
+    simulatePaymentProcessing(shouldSucceed);
+  };
+
   const getPaymentMethodName = (method: PaymentMethod): string => {
     switch (method) {
       case 'credit_card': return 'Credit Card';
       case 'paypal': return 'PayPal';
-      case 'stripe': return 'Stripe';
-      case 'venmo': return 'Venmo';
+      case 'google_pay': return 'Google Pay';
       default: return '';
     }
   };
@@ -170,8 +236,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
     switch (method) {
       case 'credit_card': return <CreditCard className="h-5 w-5" />;
       case 'paypal': return <DollarSign className="h-5 w-5" />;
-      case 'stripe': return <DollarSign className="h-5 w-5" />;
-      case 'venmo': return <DollarSign className="h-5 w-5" />;
+      case 'google_pay': return <img src="/lovable-uploads/519f0b55-8035-453a-a94e-34f07575e103.png" alt="Google Pay" className="h-5 w-5" />;
       default: return null;
     }
   };
@@ -216,20 +281,14 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
               
               <div className="flex items-center justify-between border rounded-lg p-3">
                 <div className="flex items-center space-x-3">
-                  <RadioGroupItem value="stripe" id="stripe" />
-                  <label htmlFor="stripe" className="flex items-center cursor-pointer">
-                    <DollarSign className="h-5 w-5 mr-2" />
-                    <span>Stripe</span>
-                  </label>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between border rounded-lg p-3">
-                <div className="flex items-center space-x-3">
-                  <RadioGroupItem value="venmo" id="venmo" />
-                  <label htmlFor="venmo" className="flex items-center cursor-pointer">
-                    <DollarSign className="h-5 w-5 mr-2" />
-                    <span>Venmo</span>
+                  <RadioGroupItem value="google_pay" id="google_pay" />
+                  <label htmlFor="google_pay" className="flex items-center cursor-pointer">
+                    <img 
+                      src="/lovable-uploads/519f0b55-8035-453a-a94e-34f07575e103.png" 
+                      alt="Google Pay" 
+                      className="h-5 w-5 mr-2"
+                    />
+                    <span>Google Pay</span>
                   </label>
                 </div>
               </div>
@@ -333,6 +392,138 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
                 />
               </div>
             </div>
+            <div className="space-y-2">
+              <label htmlFor="phone" className="text-sm font-medium">Phone Number for Verification</label>
+              <Input 
+                id="phone" 
+                name="phone" 
+                placeholder="+1 (555) 123-4567" 
+                value={formData.phone}
+                onChange={handleInputChange}
+              />
+            </div>
+            
+            <div className="flex flex-col gap-2 pt-4">
+              <Button type="submit" disabled={paymentStatus === 'processing'}>
+                {paymentStatus === 'processing' ? (
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                ) : (
+                  <>
+                    Continue
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => setShowCardDetails(false)}
+                disabled={paymentStatus === 'processing'}
+              >
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Verification Method Dialog */}
+      <Dialog open={showVerificationDialog} onOpenChange={setShowVerificationDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Choose Verification Method</DialogTitle>
+            <DialogDescription>
+              To verify your payment, choose how you'd like to receive the verification code
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            {errorMessage && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{errorMessage}</AlertDescription>
+              </Alert>
+            )}
+            
+            <div className="grid grid-cols-1 gap-4">
+              <Button 
+                onClick={() => handleVerificationMethodSelect('sms')}
+                className="flex justify-start items-center h-auto py-3 px-4"
+                variant="outline"
+              >
+                <Smartphone className="h-5 w-5 mr-3" />
+                <div className="text-left">
+                  <div className="font-medium">Receive SMS</div>
+                  <div className="text-sm text-muted-foreground">
+                    We'll send a code to {formData.phone || "+1 (***) ***-**67"}
+                  </div>
+                </div>
+              </Button>
+              
+              <Button 
+                onClick={() => handleVerificationMethodSelect('call')}
+                className="flex justify-start items-center h-auto py-3 px-4"
+                variant="outline"
+              >
+                <Phone className="h-5 w-5 mr-3" />
+                <div className="text-left">
+                  <div className="font-medium">Receive Phone Call</div>
+                  <div className="text-sm text-muted-foreground">
+                    We'll call you with a code at {formData.phone || "+1 (***) ***-**67"}
+                  </div>
+                </div>
+              </Button>
+            </div>
+            
+            <Button 
+              variant="outline" 
+              className="w-full mt-4" 
+              onClick={() => {
+                setShowVerificationDialog(false);
+                setShowCardDetails(true);
+              }}
+            >
+              Back
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+      
+      {/* OTP Input Dialog */}
+      <Dialog open={showOtpDialog} onOpenChange={setShowOtpDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enter Verification Code</DialogTitle>
+            <DialogDescription>
+              {verificationMethod === 'sms' 
+                ? `We've sent a 6-digit code to ${formData.phone || "+1 (***) ***-**67"} via SMS`
+                : `You'll receive a 6-digit code via phone call at ${formData.phone || "+1 (***) ***-**67"}`
+              }
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleOtpSubmit} className="space-y-4">
+            {errorMessage && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{errorMessage}</AlertDescription>
+              </Alert>
+            )}
+            
+            <div className="flex justify-center py-4">
+              <InputOTP 
+                maxLength={6}
+                value={otpValue}
+                onChange={setOtpValue}
+                render={({ slots }) => (
+                  <InputOTPGroup>
+                    {slots.map((slot, index) => (
+                      <InputOTPSlot key={index} {...slot} index={index} />
+                    ))}
+                  </InputOTPGroup>
+                )}
+              />
+            </div>
             
             {paymentStatus === 'success' && (
               <Alert className="bg-green-50 border-green-200">
@@ -352,8 +543,11 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
               </Alert>
             )}
             
-            <div className="flex flex-col gap-2 pt-4">
-              <Button type="submit" disabled={paymentStatus === 'processing' || paymentStatus === 'success'}>
+            <div className="flex flex-col gap-2 pt-2">
+              <Button 
+                type="submit" 
+                disabled={paymentStatus === 'processing' || paymentStatus === 'success' || otpValue.length < 6}
+              >
                 {paymentStatus === 'processing' ? (
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                 ) : paymentStatus === 'success' ? (
@@ -363,25 +557,194 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
                   </>
                 ) : (
                   <>
-                    Pay $9.99
+                    Verify & Pay $9.99
                     <CheckCircle className="ml-2 h-4 w-4" />
                   </>
                 )}
               </Button>
+              
               <Button 
                 type="button" 
                 variant="outline" 
-                onClick={() => setShowCardDetails(false)}
+                onClick={() => {
+                  setShowOtpDialog(false);
+                  setShowVerificationDialog(true);
+                }}
                 disabled={paymentStatus === 'processing'}
               >
-                Cancel
+                Back
               </Button>
+              
+              <div className="text-center pt-2">
+                <Button variant="link" className="text-sm p-0 h-auto">
+                  Didn't receive a code? Resend
+                </Button>
+              </div>
             </div>
           </form>
         </DialogContent>
       </Dialog>
       
-      {/* External Payment Dialog (PayPal, Stripe, Venmo) */}
+      {/* Google Pay Dialog */}
+      <Dialog open={showGooglePayDialog} onOpenChange={setShowGooglePayDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="mx-auto mb-4">
+              <img 
+                src="/lovable-uploads/519f0b55-8035-453a-a94e-34f07575e103.png" 
+                alt="Google Pay" 
+                className="h-8" 
+              />
+            </div>
+            <DialogTitle className="text-center">Quét QR & Thanh toán bằng ứng dụng</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {errorMessage && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{errorMessage}</AlertDescription>
+              </Alert>
+            )}
+            
+            <div className="border-t border-b py-4">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <div className="cursor-pointer mb-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <div className="h-8 w-8 bg-gray-200 rounded-full mr-3 flex items-center justify-center">
+                          <span className="text-lg">👤</span>
+                        </div>
+                        <div>
+                          <p className="font-medium">{googleAccounts[selectedGoogleAccount].name}</p>
+                          <p className="text-sm text-muted-foreground">{googleAccounts[selectedGoogleAccount].email}</p>
+                        </div>
+                      </div>
+                      <div>
+                        <ArrowRight className="h-4 w-4 rotate-90" />
+                      </div>
+                    </div>
+                  </div>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0">
+                  <div className="p-2">
+                    {googleAccounts.map((account, index) => (
+                      <div 
+                        key={index}
+                        className={`p-2 rounded hover:bg-muted cursor-pointer ${index === selectedGoogleAccount ? 'bg-muted' : ''}`}
+                        onClick={() => {
+                          setSelectedGoogleAccount(index);
+                          setSelectedCard(0); // Reset selected card when changing account
+                        }}
+                      >
+                        <div className="flex items-center">
+                          <div className="h-8 w-8 bg-gray-200 rounded-full mr-3 flex items-center justify-center">
+                            <span className="text-lg">👤</span>
+                          </div>
+                          <div>
+                            <p className="font-medium">{account.name}</p>
+                            <p className="text-sm text-muted-foreground">{account.email}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    <div className="p-2 rounded hover:bg-muted cursor-pointer border-t mt-2 pt-3">
+                      <p className="text-primary font-medium">Add another account</p>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+              
+              <Popover>
+                <PopoverTrigger asChild>
+                  <div className="cursor-pointer">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <div className="h-8 w-8 bg-orange-100 rounded-md mr-3 flex items-center justify-center">
+                          <span className="text-lg">💳</span>
+                        </div>
+                        <div>
+                          <p className="font-medium">{googleAccounts[selectedGoogleAccount].cards[selectedCard].type} •••• {googleAccounts[selectedGoogleAccount].cards[selectedCard].lastFour}</p>
+                        </div>
+                      </div>
+                      <div>
+                        <ArrowRight className="h-4 w-4 rotate-90" />
+                      </div>
+                    </div>
+                  </div>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0">
+                  <div className="p-2">
+                    {googleAccounts[selectedGoogleAccount].cards.map((card, index) => (
+                      <div 
+                        key={index}
+                        className={`p-2 rounded hover:bg-muted cursor-pointer ${index === selectedCard ? 'bg-muted' : ''}`}
+                        onClick={() => setSelectedCard(index)}
+                      >
+                        <div className="flex items-center">
+                          <div className="h-8 w-8 bg-orange-100 rounded-md mr-3 flex items-center justify-center">
+                            <span className="text-lg">💳</span>
+                          </div>
+                          <div>
+                            <p className="font-medium">{card.type} •••• {card.lastFour}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    <div className="p-2 rounded hover:bg-muted cursor-pointer border-t mt-2 pt-3">
+                      <p className="text-primary font-medium">Add payment method</p>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+            
+            <p className="text-sm text-muted-foreground text-center">
+              Your billing details will also be shared with the merchant
+            </p>
+            
+            {paymentStatus === 'success' && (
+              <Alert className="bg-green-50 border-green-200">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <AlertTitle className="text-green-600">Payment Successful</AlertTitle>
+                <AlertDescription className="text-green-600">
+                  Your Google Pay payment has been processed successfully.
+                </AlertDescription>
+              </Alert>
+            )}
+            
+            {paymentStatus === 'failed' && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Payment Failed</AlertTitle>
+                <AlertDescription>{errorMessage}</AlertDescription>
+              </Alert>
+            )}
+            
+            <div className="flex justify-center pt-2">
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700 w-48"
+                onClick={handleGooglePaySubmit}
+                disabled={paymentStatus === 'processing' || paymentStatus === 'success'}
+              >
+                {paymentStatus === 'processing' ? (
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                ) : paymentStatus === 'success' ? (
+                  <>
+                    Payment Complete
+                    <CheckCircle className="ml-2 h-4 w-4" />
+                  </>
+                ) : (
+                  'CONTINUE'
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+      
+      {/* External Payment Dialog (PayPal) */}
       <Dialog open={showExternalPayment} onOpenChange={setShowExternalPayment}>
         <DialogContent>
           <DialogHeader>
@@ -424,19 +787,6 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
               </div>
             )}
             
-            {paymentMethod === 'venmo' && (
-              <div className="space-y-2">
-                <label htmlFor="accountId" className="text-sm font-medium">Venmo Username</label>
-                <Input 
-                  id="accountId" 
-                  name="accountId"
-                  placeholder="@username" 
-                  value={formData.accountId}
-                  onChange={handleInputChange}
-                />
-              </div>
-            )}
-            
             {paymentStatus === 'success' && (
               <Alert className="bg-green-50 border-green-200">
                 <CheckCircle className="h-4 w-4 text-green-600" />
@@ -455,15 +805,6 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
               </Alert>
             )}
             
-            {paymentMethod === 'stripe' && paymentStatus === 'idle' && (
-              <Alert>
-                <AlertTitle>Stripe Payment</AlertTitle>
-                <AlertDescription>
-                  You'll be redirected to Stripe's secure payment page after clicking "Continue".
-                </AlertDescription>
-              </Alert>
-            )}
-            
             <div className="flex flex-col gap-2 pt-4">
               <Button 
                 type="submit" 
@@ -478,7 +819,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
                   </>
                 ) : (
                   <>
-                    {paymentMethod === 'stripe' ? 'Continue to Stripe' : `Pay with ${getPaymentMethodName(paymentMethod)}`}
+                    {`Pay with ${getPaymentMethodName(paymentMethod)}`}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </>
                 )}
