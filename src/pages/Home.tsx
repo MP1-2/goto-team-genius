@@ -1,6 +1,18 @@
-
 import React, { useRef } from 'react';
 import { Button } from '@/components/ui/button';
+import { 
+  Search, 
+  Sparkles, 
+  Bookmark, 
+  ArrowRight, 
+  CheckCircle, 
+  Smartphone, 
+  Trophy, 
+  Handshake, 
+  Newspaper, 
+  ShieldCheck,
+  ImageIcon 
+} from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import ActionCard from '@/components/home/ActionCard';
 import BottomNavigation from '@/components/layout/BottomNavigation';
@@ -192,7 +204,7 @@ const Home: React.FC = () => {
             <Card className="overflow-hidden border-2 hover:border-primary transition-all">
               <CardContent className="p-6 flex flex-col items-center text-center space-y-4">
                 <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                  <Image className="h-7 w-7" />
+                  <ImageIcon className="h-7 w-7" />
                 </div>
                 <h3 className="text-xl font-semibold">Logo Generation</h3>
                 <p className="text-muted-foreground">
