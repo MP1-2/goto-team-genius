@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Lock, LogIn, Images } from 'lucide-react';
+import { Search, Lock, LogIn } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import PlatformAvailability from '@/components/shared/PlatformAvailability';
 import { toast } from 'sonner';
@@ -96,22 +96,6 @@ const HeroSection = () => {
               </Button>
             </div>
           </div>
-          
-          {/* Default state when no search has been performed */}
-          {!searchResult && !isSearching && (
-            <div className="flex items-center justify-center w-full max-w-2xl mx-auto min-h-[300px]">
-              <div className="flex flex-col items-center space-y-4 bg-white/10 rounded-lg border border-white/20 p-8 w-full">
-                <img 
-                  src="/lovable-uploads/b95f0d99-ef98-45aa-9832-78e0ae537e48.png" 
-                  alt="Team Name Availability" 
-                  className="max-w-full max-h-full object-contain mb-4"
-                />
-                <p className="text-white/80 text-lg text-center">
-                  Enter a team name to check availability
-                </p>
-              </div>
-            </div>
-          )}
           
           {/* Loading state */}
           {isSearching && (
