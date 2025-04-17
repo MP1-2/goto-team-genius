@@ -3,11 +3,12 @@ import React, { useState } from 'react';
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Mail, Send } from "lucide-react";
+import { Mail, Send, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useNavigate } from 'react-router-dom';
 import {
   Form,
   FormControl,
@@ -30,6 +31,7 @@ type FormValues = z.infer<typeof formSchema>;
 const Contact: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -72,6 +74,16 @@ const Contact: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-white">
       <main className="flex-1">
         <div className="container max-w-4xl mx-auto px-4 py-12 md:py-20">
+          <Button
+            variant="ghost" 
+            size="sm"
+            className="mb-6 text-[#4566E8] hover:bg-[#4566E8]/10"
+            onClick={() => navigate('/')}
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Home
+          </Button>
+          
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">Contact Us</h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
