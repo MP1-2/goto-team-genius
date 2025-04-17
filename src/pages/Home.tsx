@@ -1,8 +1,6 @@
 
 import React, { useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Search, Sparkles, Bookmark, Image, ArrowRight, CheckCircle, Smartphone, Trophy, Handshake, Newspaper, ShieldCheck } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import ActionCard from '@/components/home/ActionCard';
 import BottomNavigation from '@/components/layout/BottomNavigation';
@@ -143,7 +141,12 @@ const Home: React.FC = () => {
               <Button asChild size="lg" className="flex-1">
                 <Link to="/search">Check Name</Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="flex-1 bg-white text-primary hover:bg-white/90">
+              <Button 
+                asChild 
+                variant="outline" 
+                size="lg" 
+                className="flex-1 bg-white text-primary hover:bg-white/90"
+              >
                 <Link to="/search">Check Name</Link>
               </Button>
             </div>
