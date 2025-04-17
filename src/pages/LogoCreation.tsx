@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Download, Loader2, RefreshCw, AlertCircle } from 'lucide-react';
@@ -131,7 +130,7 @@ const LogoCreation: React.FC = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate('/portal')}
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>

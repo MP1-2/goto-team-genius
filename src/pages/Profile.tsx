@@ -167,7 +167,7 @@ const Profile: React.FC = () => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate('/home')}
+              onClick={() => navigate('/portal')}
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>

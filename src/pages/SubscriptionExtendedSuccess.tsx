@@ -22,7 +22,7 @@ const SubscriptionExtendedSuccess: React.FC = () => {
   }, []);
 
   const handleGoHome = () => {
-    navigate('/home');
+    navigate('/portal');
   };
 
   const handleGoToProfile = () => {
@@ -67,7 +67,7 @@ const SubscriptionExtendedSuccess: React.FC = () => {
             onClick={handleGoHome}
           >
             <Home className="mr-1 h-4 w-4" />
-            Return to Home
+            Return to Portal
           </Button>
         </CardFooter>
       </Card>

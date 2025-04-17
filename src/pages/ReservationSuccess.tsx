@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -21,9 +20,7 @@ const ReservationSuccess: React.FC = () => {
   const teamName = location.state?.teamName || 'Team Name';
   const [openDialog, setOpenDialog] = useState(false);
 
-  // Generate a unique code for the team name (in a real app, this would come from the backend)
   const generateUniqueCode = (name: string) => {
-    // For demo purposes, generate a random code with teamName and timestamp
     const timestamp = Date.now().toString(36);
     const randomChars = Math.random().toString(36).substring(2, 8);
     return `${name.replace(/\s+/g, '')}${timestamp}${randomChars}`.toUpperCase();
@@ -31,10 +28,8 @@ const ReservationSuccess: React.FC = () => {
 
   const uniqueCode = React.useMemo(() => generateUniqueCode(teamName), [teamName]);
   
-  // Mock platforms for demonstration
   const platforms = ['ESPN', 'Yahoo', 'Sleeper', 'NFL'];
 
-  // Trigger confetti animation on component mount
   React.useEffect(() => {
     confetti({
       particleCount: 100,
@@ -48,14 +43,13 @@ const ReservationSuccess: React.FC = () => {
   };
 
   const handleGoHome = () => {
-    navigate('/home');
+    navigate('/portal');
   };
 
   const handleCopyCode = (code: string) => {
     navigator.clipboard.writeText(code);
     toast.success('Code copied to clipboard!');
 
-    // Store the code in localStorage with the team name
     try {
       const storedCodes = JSON.parse(localStorage.getItem('teamCodes') || '{}');
       storedCodes[teamName] = {
@@ -149,7 +143,7 @@ const ReservationSuccess: React.FC = () => {
             onClick={handleGoHome}
           >
             <Home className="mr-1 h-4 w-4" />
-            Return to Home
+            Return to Portal
           </Button>
         </CardFooter>
       </Card>

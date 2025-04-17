@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Search, Wand, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import NameSuggestionCard from '@/components/suggestions/NameSuggestionCard';
 import { toast } from 'sonner';
+import NameSuggestionCard from '@/components/suggestions/NameSuggestionCard';
 
 const AISuggestions: React.FC = () => {
   const navigate = useNavigate();
@@ -18,7 +17,6 @@ const AISuggestions: React.FC = () => {
     platforms?: { name: string; available: boolean }[];
   }>>([]);
 
-  // Get user preferences from localStorage
   const [userPreferences, setUserPreferences] = useState<any>(null);
 
   useEffect(() => {
@@ -27,16 +25,13 @@ const AISuggestions: React.FC = () => {
       setUserPreferences(JSON.parse(storedPreferences));
     }
     
-    // Generate initial suggestions based on preferences
     generateSuggestions();
   }, []);
 
   const generateSuggestions = () => {
     setIsLoading(true);
     
-    // Mock API call for generating suggestions
     setTimeout(() => {
-      // Create some example suggestions with platform availability already checked
       const mockSuggestions = [
         { 
           id: '1', 
@@ -120,9 +115,7 @@ const AISuggestions: React.FC = () => {
     setIsLoading(true);
     toast.success('Generating new suggestions...');
     
-    // Mock API call for custom prompt
     setTimeout(() => {
-      // Create custom suggestions based on prompt with platform availability already checked
       const customSuggestions = [
         { 
           id: '7', 
@@ -188,23 +181,20 @@ const AISuggestions: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background pb-6">
-      {/* Header */}
       <div className="sticky top-0 z-10 bg-background">
         <div className="flex items-center border-b px-4 py-3">
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate('/home')}
+            onClick={() => navigate('/portal')}
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <h1 className="ml-2 text-lg font-semibold">AI Name Suggestions</h1>
+          <h1 className="ml-2 text-lg font-semibold">AI Team Name Suggestions</h1>
         </div>
       </div>
 
-      {/* Content */}
       <div className="px-6 pt-6">
-        {/* Custom Prompt Section - MOVED TO THE TOP */}
         <section className="mb-6">
           <h2 className="mb-4 text-lg font-semibold">Generate Custom Suggestions</h2>
           <div className="rounded-lg border bg-card p-4">
@@ -224,7 +214,6 @@ const AISuggestions: React.FC = () => {
           </div>
         </section>
 
-        {/* Personalized Suggestions */}
         <section>
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-semibold">Suggestions for You</h2>
@@ -264,8 +253,6 @@ const AISuggestions: React.FC = () => {
             </div>
           )}
         </section>
-
-        {/* Removed the old custom prompt section */}
       </div>
     </div>
   );

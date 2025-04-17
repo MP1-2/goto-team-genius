@@ -22,12 +22,10 @@ const Reservation: React.FC = () => {
 
   const handleReserve = () => {
     if (!isSubscribed) {
-      // Navigate to payment page
       navigate('/payment', { state: { teamName, returnPath: '/reservation-success' } });
       return;
     }
 
-    // Process reservation
     setIsLoading(true);
     toast.success('Processing reservation...');
     
@@ -35,20 +33,18 @@ const Reservation: React.FC = () => {
       setIsReserved(true);
       setIsLoading(false);
       
-      // Navigate to success page instead of showing success on the same page
       navigate('/reservation-success', { state: { teamName } });
     }, 1500);
   };
 
   return (
     <div className="min-h-screen bg-background pb-6">
-      {/* Header */}
       <div className="sticky top-0 z-10 bg-background">
         <div className="flex items-center border-b px-4 py-3">
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate('/search')}
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -56,7 +52,6 @@ const Reservation: React.FC = () => {
         </div>
       </div>
 
-      {/* Content */}
       <div className="px-6 pt-6">
         <Card className="animate-fade-in">
           <CardHeader>
