@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -13,7 +12,7 @@ const PLAYER_RANKINGS = {
     { id: '2', name: 'Patrick Mahomes', sport: 'Football', position: 'QB', rank: 2, team: 'Kansas City Chiefs', teamLogo: 'https://a.espncdn.com/i/teamlogos/nfl/500/kc.png', league: 'NFL', bestPerf: '90%', worstPerf: '71%', trend: 'same' },
     { id: '3', name: 'Justin Jefferson', sport: 'Football', position: 'WR', rank: 3, team: 'Minnesota Vikings', teamLogo: 'https://a.espncdn.com/i/teamlogos/nfl/500/min.png', league: 'NFL', bestPerf: '88%', worstPerf: '68%', trend: 'up' },
     { id: '4', name: 'Travis Kelce', sport: 'Football', position: 'TE', rank: 4, team: 'Kansas City Chiefs', teamLogo: 'https://a.espncdn.com/i/teamlogos/nfl/500/kc.png', league: 'NFL', bestPerf: '87%', worstPerf: '65%', trend: 'down' },
-    { id: '5', name: 'Ja'Marr Chase', sport: 'Football', position: 'WR', rank: 5, team: 'Cincinnati Bengals', teamLogo: 'https://a.espncdn.com/i/teamlogos/nfl/500/cin.png', league: 'NFL', bestPerf: '86%', worstPerf: '69%', trend: 'up' },
+    { id: '5', name: "Ja'Marr Chase", sport: 'Football', position: 'WR', rank: 5, team: 'Cincinnati Bengals', teamLogo: 'https://a.espncdn.com/i/teamlogos/nfl/500/cin.png', league: 'NFL', bestPerf: '86%', worstPerf: '69%', trend: 'up' },
     { id: '6', name: 'Josh Allen', sport: 'Football', position: 'QB', rank: 6, team: 'Buffalo Bills', teamLogo: 'https://a.espncdn.com/i/teamlogos/nfl/500/buf.png', league: 'NFL', bestPerf: '89%', worstPerf: '67%', trend: 'down' },
     { id: '7', name: 'Derrick Henry', sport: 'Football', position: 'RB', rank: 7, team: 'Baltimore Ravens', teamLogo: 'https://a.espncdn.com/i/teamlogos/nfl/500/bal.png', league: 'NFL', bestPerf: '88%', worstPerf: '64%', trend: 'same' },
     { id: '8', name: 'Austin Ekeler', sport: 'Football', position: 'RB', rank: 8, team: 'Washington Commanders', teamLogo: 'https://a.espncdn.com/i/teamlogos/nfl/500/wsh.png', league: 'NFL', bestPerf: '84%', worstPerf: '62%', trend: 'up' },
