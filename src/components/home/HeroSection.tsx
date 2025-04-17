@@ -20,8 +20,8 @@ const HeroSection = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
             <Button 
-              variant="ghost" 
-              className="flex-1 text-white border border-white hover:bg-white/10"
+              variant="default"
+              className="flex-1 bg-white text-[#4566E8] hover:bg-white/90"
               onClick={handleCheckName}
             >
               Check Name
