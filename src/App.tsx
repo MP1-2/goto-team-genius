@@ -27,6 +27,12 @@ import Blogs from "./pages/Blogs";
 import BlogPost from "./pages/BlogPost";
 import Contact from "./pages/Contact";
 
+// Solution pages
+import NameReservationSolution from "./pages/solutions/NameReservationSolution";
+import AiSuggestionsSolution from "./pages/solutions/AiSuggestionsSolution";
+import LogoGenerationSolution from "./pages/solutions/LogoGenerationSolution";
+import VerifiedCheckmarkSolution from "./pages/solutions/VerifiedCheckmarkSolution";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -55,6 +61,13 @@ const App = () => (
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/blogs/:id" element={<BlogPost />} />
           <Route path="/contact" element={<Contact />} />
+          
+          {/* Solution pages */}
+          <Route path="/solutions/name-reservation" element={<NameReservationSolution />} />
+          <Route path="/solutions/ai-suggestions" element={<AiSuggestionsSolution />} />
+          <Route path="/solutions/logo-generation" element={<LogoGenerationSolution />} />
+          <Route path="/solutions/verified-checkmark" element={<VerifiedCheckmarkSolution />} />
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
