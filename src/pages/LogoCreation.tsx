@@ -32,6 +32,19 @@ const LogoCreation: React.FC = () => {
   const [purchasedNames, setPurchasedNames] = useState(MOCK_PURCHASED_NAMES);
   
   useEffect(() => {
+    // Check if user is logged in
+    const userInfo = localStorage.getItem('userInfo');
+    
+    if (!userInfo) {
+      toast.error('Please log in to create a logo');
+      // Save state in session storage if needed
+      if (location.state?.teamName) {
+        sessionStorage.setItem('pendingLogoTeam', location.state.teamName);
+      }
+      navigate('/login');
+      return;
+    }
+    
     // Set initial name from location state or first purchased name
     if (location.state?.teamName) {
       setName(location.state.teamName);
@@ -42,7 +55,7 @@ const LogoCreation: React.FC = () => {
       setSelectedNameId(purchasedNames[0].id);
       setName(purchasedNames[0].name);
     }
-  }, [location.state?.teamName, purchasedNames]);
+  }, [location.state?.teamName, purchasedNames, navigate]);
 
   const handleSelectPurchasedName = (id: string) => {
     const selectedName = purchasedNames.find(n => n.id === id);

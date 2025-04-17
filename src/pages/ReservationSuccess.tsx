@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CheckCircle, ChevronRight, Home, Image, Copy } from 'lucide-react';
@@ -19,6 +20,23 @@ const ReservationSuccess: React.FC = () => {
   const location = useLocation();
   const teamName = location.state?.teamName || 'Team Name';
   const [openDialog, setOpenDialog] = useState(false);
+
+  useEffect(() => {
+    // Check if user is logged in
+    const userInfo = localStorage.getItem('userInfo');
+    
+    if (!userInfo) {
+      toast.error('Please log in to view your reservation');
+      navigate('/login');
+      return;
+    }
+    
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+  }, [navigate]);
 
   const generateUniqueCode = (name: string) => {
     const timestamp = Date.now().toString(36);

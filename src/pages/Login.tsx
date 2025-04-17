@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
@@ -42,8 +42,21 @@ const Login: React.FC = () => {
         }
         
         toast.success('Login successful');
-        // Redirect to the user portal
-        navigate('/portal');
+        
+        // Check if there's a pending reservation or logo creation
+        const pendingReservation = sessionStorage.getItem('pendingReservation');
+        const pendingLogoTeam = sessionStorage.getItem('pendingLogoTeam');
+        
+        if (pendingReservation) {
+          sessionStorage.removeItem('pendingReservation');
+          navigate('/reservation', { state: { teamName: pendingReservation } });
+        } else if (pendingLogoTeam) {
+          sessionStorage.removeItem('pendingLogoTeam');
+          navigate('/logo', { state: { teamName: pendingLogoTeam } });
+        } else {
+          // Redirect to the user portal
+          navigate('/portal');
+        }
       } else {
         toast.error('Invalid email or password');
         setIsLoading(false);

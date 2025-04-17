@@ -84,6 +84,17 @@ const TeamNameSearch: React.FC = () => {
   };
 
   const handleReserve = () => {
+    // Check if user is logged in before proceeding to reservation
+    const userInfo = localStorage.getItem('userInfo');
+    
+    if (!userInfo) {
+      toast.error('Please log in to reserve this name');
+      // Save team name in session storage so we can redirect back after login
+      sessionStorage.setItem('pendingReservation', searchResult?.name || '');
+      navigate('/login');
+      return;
+    }
+    
     toast.success('Redirecting to reservation page');
     navigate('/reservation', { state: { teamName: searchResult?.name } });
   };

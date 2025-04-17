@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, CheckCircle, XCircle } from 'lucide-react';
@@ -19,6 +20,18 @@ const Reservation: React.FC = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isReserved, setIsReserved] = useState(false);
   const [purchasedNames] = useState(MOCK_PURCHASED_NAMES);
+
+  useEffect(() => {
+    // Check if user is logged in
+    const userInfo = localStorage.getItem('userInfo');
+    
+    if (!userInfo) {
+      toast.error('Please log in to reserve a name');
+      // Save team name in session storage so we can redirect back after login
+      sessionStorage.setItem('pendingReservation', teamName);
+      navigate('/login');
+    }
+  }, [navigate, teamName]);
 
   const handleReserve = () => {
     if (!isSubscribed) {
