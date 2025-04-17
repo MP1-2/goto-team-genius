@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Sparkles, Bookmark, Image, ArrowRight, CheckCircle, Smartphone, Trophy, HandShake, Newspaper } from 'lucide-react';
+import { Search, Sparkles, Bookmark, Image, ArrowRight, CheckCircle, Smartphone, Trophy, Handshake, Newspaper } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import ActionCard from '@/components/home/ActionCard';
 import BottomNavigation from '@/components/layout/BottomNavigation';
