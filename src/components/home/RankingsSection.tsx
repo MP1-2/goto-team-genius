@@ -139,10 +139,6 @@ const RankingsSection: React.FC<RankingsSectionProps> = ({ rankingsRef }) => {
             </TabsContent>
           ))}
         </Tabs>
-        
-        <div className="mt-10 text-center">
-          <Button variant="outline">View Complete Rankings</Button>
-        </div>
       </div>
     </section>
   );
