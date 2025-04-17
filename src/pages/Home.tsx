@@ -124,7 +124,7 @@ const Home: React.FC = () => {
           
           <div>
             <Button asChild size="sm">
-              <Link to="/login">Get Started</Link>
+              <Link to="/login">Login</Link>
             </Button>
           </div>
         </div>
@@ -140,10 +140,7 @@ const Home: React.FC = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
               <Button asChild size="lg" className="flex-1">
-                <Link to="/login">Get Started</Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="flex-1 bg-white text-primary hover:bg-white/90">
-                <Link to="/login">Check Name</Link>
+                <Link to="/search">Check Name</Link>
               </Button>
             </div>
           </div>
@@ -170,9 +167,6 @@ const Home: React.FC = () => {
                 <p className="text-muted-foreground">
                   Secure an exclusive team name across ESPN, Yahoo, Sleeper, NFL, and other fantasy platforms.
                 </p>
-                <Button asChild variant="outline">
-                  <Link to="/login">Get Started</Link>
-                </Button>
               </CardContent>
             </Card>
             
@@ -185,9 +179,6 @@ const Home: React.FC = () => {
                 <p className="text-muted-foreground">
                   Let our AI generate unique, creative, and personalized team name ideas based on your preferences.
                 </p>
-                <Button asChild variant="outline">
-                  <Link to="/login">Get Started</Link>
-                </Button>
               </CardContent>
             </Card>
             
@@ -200,9 +191,6 @@ const Home: React.FC = () => {
                 <p className="text-muted-foreground">
                   Create professional-looking team logos that perfectly match your team name and style.
                 </p>
-                <Button asChild variant="outline">
-                  <Link to="/login">Get Started</Link>
-                </Button>
               </CardContent>
             </Card>
             
@@ -215,9 +203,6 @@ const Home: React.FC = () => {
                 <p className="text-muted-foreground">
                   Display an exclusive verification badge next to your team name, ensuring its authenticity and uniqueness.
                 </p>
-                <Button asChild variant="outline">
-                  <Link to="/login">Get Started</Link>
-                </Button>
               </CardContent>
             </Card>
           </div>
