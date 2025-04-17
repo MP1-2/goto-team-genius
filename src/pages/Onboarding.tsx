@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -54,7 +53,7 @@ const Onboarding: React.FC = () => {
     if (step < totalSteps) {
       setStep(step + 1);
     } else {
-      // Save preferences and navigate to home
+      // Save preferences and navigate to user portal instead of home
       try {
         const userInfoStr = localStorage.getItem('userInfo');
         if (userInfoStr) {
@@ -68,7 +67,7 @@ const Onboarding: React.FC = () => {
       } catch (error) {
         console.error('Error saving preferences:', error);
       }
-      navigate('/home');
+      navigate('/portal'); // Changed from '/home' to '/portal'
     }
   };
 
