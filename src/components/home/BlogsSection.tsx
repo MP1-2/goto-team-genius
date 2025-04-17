@@ -57,12 +57,17 @@ const BlogsSection: React.FC<BlogsSectionProps> = ({ blogsRef }) => {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {BLOG_POSTS.map((post) => (
-            <Card key={post.id} className="overflow-hidden hover:shadow-md transition-all">
+            <Card key={post.id} className="overflow-hidden hover:shadow-md transition-all cursor-pointer" onClick={() => handleReadMore(post.id)}>
               <div className="aspect-video w-full overflow-hidden">
                 <img 
                   src={post.image} 
                   alt={post.title}
                   className="w-full h-full object-cover transition-all hover:scale-105"
+                  onError={(e) => {
+                    // Fallback to a default sports image if the original fails to load
+                    const target = e.target as HTMLImageElement;
+                    target.src = "https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60";
+                  }}
                 />
               </div>
               <CardContent className="p-6">
@@ -73,7 +78,10 @@ const BlogsSection: React.FC<BlogsSectionProps> = ({ blogsRef }) => {
                   <Button 
                     variant="link" 
                     className="p-0 h-auto text-primary"
-                    onClick={() => handleReadMore(post.id)}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent card click from firing
+                      handleReadMore(post.id);
+                    }}
                   >
                     Read More <ArrowRight className="h-4 w-4 ml-1" />
                   </Button>

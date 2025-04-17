@@ -126,6 +126,11 @@ const BlogPost: React.FC = () => {
                 src={post.image} 
                 alt={post.title}
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  // Fallback to a default sports image if the original fails to load
+                  const target = e.target as HTMLImageElement;
+                  target.src = "https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80";
+                }}
               />
             </div>
             
@@ -162,17 +167,22 @@ const BlogPost: React.FC = () => {
                 {relatedPosts.map(relatedPost => (
                   <div 
                     key={relatedPost.id} 
-                    className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                    className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
                     onClick={() => navigate(`/blogs/${relatedPost.id}`)}
                   >
                     <div className="aspect-video rounded-md overflow-hidden mb-3">
                       <img 
                         src={relatedPost.image} 
                         alt={relatedPost.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover transition-transform hover:scale-105"
+                        onError={(e) => {
+                          // Fallback to a default sports image if the original fails to load
+                          const target = e.target as HTMLImageElement;
+                          target.src = "https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60";
+                        }}
                       />
                     </div>
-                    <h4 className="font-medium mb-2">{relatedPost.title}</h4>
+                    <h4 className="font-medium mb-2 hover:text-primary">{relatedPost.title}</h4>
                     <p className="text-sm text-muted-foreground">{relatedPost.excerpt}</p>
                   </div>
                 ))}
