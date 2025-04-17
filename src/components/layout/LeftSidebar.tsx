@@ -1,8 +1,9 @@
 
 import React from 'react';
-import { Heart, Home, User } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Heart, Home, User, LogOut } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 import {
   Sidebar,
   SidebarContent,
@@ -15,6 +16,7 @@ import {
 } from "@/components/ui/sidebar";
 
 const LeftSidebar = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   
   const navItems = [
@@ -34,6 +36,17 @@ const LeftSidebar = () => {
       path: '/profile',
     },
   ];
+
+  const handleLogout = () => {
+    // Clear user info from localStorage
+    localStorage.removeItem('userInfo');
+    
+    // Show a toast notification
+    toast.success('Logged out successfully');
+    
+    // Navigate to the home/intro page
+    navigate('/');
+  };
 
   return (
     <Sidebar>
@@ -56,6 +69,23 @@ const LeftSidebar = () => {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Logout Button */}
+        <SidebarGroup className="mt-auto">
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton 
+                  onClick={handleLogout}
+                  className="text-destructive hover:bg-destructive/10"
+                >
+                  <LogOut className="h-5 w-5" />
+                  <span>Log Out</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
