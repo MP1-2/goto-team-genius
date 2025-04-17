@@ -1,9 +1,15 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+
+  const handleCheckName = () => {
+    navigate('/login');
+  };
+
   return (
     <section className="relative bg-[#4566E8] text-white py-20">
       <div className="container mx-auto px-4 md:px-6">
@@ -16,12 +22,7 @@ const HeroSection = () => {
             <Button 
               variant="ghost" 
               className="flex-1 text-white border border-white hover:bg-white/10"
-            >
-              Check Name
-            </Button>
-            <Button 
-              className="flex-1"
-              onClick={() => window.location.href = '/login'}
+              onClick={handleCheckName}
             >
               Check Name
             </Button>
