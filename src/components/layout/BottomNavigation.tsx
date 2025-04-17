@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Heart, Home, User } from 'lucide-react';
+import { Heart, Home, Search, User, Wand } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
@@ -11,7 +11,17 @@ const BottomNavigation = () => {
     {
       icon: <Home className="h-6 w-6" />,
       label: 'Home',
-      path: '/home',
+      path: '/portal',
+    },
+    {
+      icon: <Search className="h-6 w-6" />,
+      label: 'Search',
+      path: '/search',
+    },
+    {
+      icon: <Wand className="h-6 w-6" />,
+      label: 'AI Tools',
+      path: '/suggestions',
     },
     {
       icon: <Heart className="h-6 w-6" />,

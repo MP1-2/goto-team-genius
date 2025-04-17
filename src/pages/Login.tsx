@@ -42,8 +42,8 @@ const Login: React.FC = () => {
         }
         
         toast.success('Login successful');
-        // Redirect to the main app flow
-        navigate('/search');
+        // Redirect to the user portal
+        navigate('/portal');
       } else {
         toast.error('Invalid email or password');
         setIsLoading(false);

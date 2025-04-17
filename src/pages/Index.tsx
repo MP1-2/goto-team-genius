@@ -14,8 +14,8 @@ const Index = () => {
     
     if (userInfo) {
       setIsLoggedIn(true);
-      // If logged in, redirect to the application main flow
-      navigate("/search", { replace: true });
+      // If logged in, redirect to the user portal
+      navigate("/portal", { replace: true });
     } else {
       // If not logged in, show the marketing homepage
       setIsLoading(false);
