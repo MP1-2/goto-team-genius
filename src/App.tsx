@@ -35,9 +35,9 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/intro" element={<Intro />} />
+          <Route path="/intro" element={<Intro />} /> {/* Keep intro only for mobile app */}
           <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/home" element={<Home />} />
+          <Route path="/home" element={<Navigate to="/" replace />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/search" element={<TeamNameSearch />} />
