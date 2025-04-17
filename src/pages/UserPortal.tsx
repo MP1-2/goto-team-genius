@@ -1,14 +1,15 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Search, Wand, Image, Clock, User, Heart, Award, Newspaper, FileText } from 'lucide-react';
+import { Search, Wand, Image, User, Heart, Award, FileText } from 'lucide-react';
 import BottomNavigation from '@/components/layout/BottomNavigation';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import LeftSidebar from '@/components/layout/LeftSidebar';
 
 const UserPortal: React.FC = () => {
   const navigate = useNavigate();
@@ -77,174 +78,189 @@ const UserPortal: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-16">
-      {/* Header */}
-      <header className="bg-white p-4 shadow-sm">
-        <div className="container mx-auto">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold">Welcome, {userInfo.name}</h1>
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => navigate('/profile')}
-            >
-              <User className="h-5 w-5" />
-            </Button>
+    <div className="h-screen bg-gray-50">
+      <SidebarProvider>
+        <div className="flex min-h-screen w-full">
+          {/* Left Sidebar - hidden on mobile */}
+          <div className="hidden md:block">
+            <LeftSidebar />
+          </div>
+
+          <div className="flex-1">
+            {/* Header */}
+            <header className="bg-white p-4 shadow-sm">
+              <div className="container mx-auto">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <SidebarTrigger className="md:hidden" />
+                    <h1 className="text-xl font-bold">Welcome, {userInfo.name}</h1>
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    onClick={() => navigate('/profile')}
+                    className="md:hidden"
+                  >
+                    <User className="h-5 w-5" />
+                  </Button>
+                </div>
+              </div>
+            </header>
+
+            <main className="container mx-auto p-4 space-y-6 pb-20 md:pb-6">
+              {/* Action Shortcuts */}
+              <section className="grid grid-cols-3 gap-4">
+                <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/search')}>
+                  <CardContent className="flex flex-col items-center justify-center p-4">
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+                      <Search className="h-6 w-6 text-primary" />
+                    </div>
+                    <span className="text-sm font-medium text-center">Reserve Name</span>
+                  </CardContent>
+                </Card>
+                
+                <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/suggestions')}>
+                  <CardContent className="flex flex-col items-center justify-center p-4">
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+                      <Wand className="h-6 w-6 text-primary" />
+                    </div>
+                    <span className="text-sm font-medium text-center">AI Name</span>
+                  </CardContent>
+                </Card>
+                
+                <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/logo')}>
+                  <CardContent className="flex flex-col items-center justify-center p-4">
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+                      <Image className="h-6 w-6 text-primary" />
+                    </div>
+                    <span className="text-sm font-medium text-center">AI Logo</span>
+                  </CardContent>
+                </Card>
+              </section>
+
+              {/* Tips for Good Team Name */}
+              <section>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-primary" />
+                    <h2 className="text-lg font-semibold">Tips for Good Team Name</h2>
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={() => navigate('/blogs')}>
+                    View All
+                  </Button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {recentBlogs.map((blog) => (
+                    <Card key={blog.id} className="overflow-hidden hover:shadow-md transition-all cursor-pointer" onClick={() => navigate(`/blogs/${blog.id}`)}>
+                      <div className="aspect-video w-full overflow-hidden">
+                        <img 
+                          src={blog.image} 
+                          alt={blog.title}
+                          className="w-full h-full object-cover transition-all hover:scale-105"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = "https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=50&q=60";
+                          }}
+                        />
+                      </div>
+                      <CardContent className="p-4">
+                        <div className="space-y-2">
+                          <div className="text-sm text-muted-foreground">{blog.date}</div>
+                          <h3 className="font-semibold">{blog.title}</h3>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </section>
+
+              {/* Player Rankings with Tabs */}
+              <section>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Award className="h-5 w-5 text-primary" />
+                    <h2 className="text-lg font-semibold">Player Rankings</h2>
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={() => navigate('/rankings')}>
+                    View All
+                  </Button>
+                </div>
+                <Card>
+                  <CardContent className="p-4">
+                    <Tabs defaultValue="football" className="w-full">
+                      <TabsList className="grid grid-cols-4 mb-4">
+                        <TabsTrigger value="football">Football</TabsTrigger>
+                        <TabsTrigger value="basketball">Basketball</TabsTrigger>
+                        <TabsTrigger value="baseball">Baseball</TabsTrigger>
+                        <TabsTrigger value="hockey">Hockey</TabsTrigger>
+                      </TabsList>
+                      
+                      {Object.keys(PLAYER_RANKINGS).map((sport) => (
+                        <TabsContent key={sport} value={sport}>
+                          <ScrollArea className="h-[350px]">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead className="w-12">Rank</TableHead>
+                                  <TableHead>Player</TableHead>
+                                  <TableHead>Team</TableHead>
+                                  <TableHead>Pos</TableHead>
+                                  <TableHead>League</TableHead>
+                                  <TableHead>Best %</TableHead>
+                                  <TableHead>Worst %</TableHead>
+                                  <TableHead className="text-right">Trend</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {PLAYER_RANKINGS[sport as keyof typeof PLAYER_RANKINGS].map((player) => (
+                                  <TableRow key={player.id} className="hover:bg-muted/50">
+                                    <TableCell className="font-medium">
+                                      <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                                        {player.rank}
+                                      </div>
+                                    </TableCell>
+                                    <TableCell className="font-medium">{player.name}</TableCell>
+                                    <TableCell>
+                                      <div className="flex items-center gap-2">
+                                        <img 
+                                          src={player.teamLogo} 
+                                          alt={player.team} 
+                                          className="h-6 w-6 object-contain"
+                                          onError={(e) => {
+                                            const target = e.target as HTMLImageElement;
+                                            target.src = "https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=50&q=60";
+                                          }}
+                                        />
+                                        <span>{player.team}</span>
+                                      </div>
+                                    </TableCell>
+                                    <TableCell>{player.position}</TableCell>
+                                    <TableCell>{player.league}</TableCell>
+                                    <TableCell className="text-green-600">{player.bestPerf}</TableCell>
+                                    <TableCell className="text-red-600">{player.worstPerf}</TableCell>
+                                    <TableCell className="text-right">
+                                      {renderTrendIcon(player.trend)}
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </ScrollArea>
+                        </TabsContent>
+                      ))}
+                    </Tabs>
+                  </CardContent>
+                </Card>
+              </section>
+            </main>
+
+            {/* Bottom Navigation - visible only on mobile */}
+            <div className="md:hidden">
+              <BottomNavigation />
+            </div>
           </div>
         </div>
-      </header>
-
-      <main className="container mx-auto p-4 space-y-6">
-        {/* Action Shortcuts */}
-        <section className="grid grid-cols-3 gap-4">
-          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/search')}>
-            <CardContent className="flex flex-col items-center justify-center p-4">
-              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
-                <Search className="h-6 w-6 text-primary" />
-              </div>
-              <span className="text-sm font-medium text-center">Reserve Name</span>
-            </CardContent>
-          </Card>
-          
-          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/suggestions')}>
-            <CardContent className="flex flex-col items-center justify-center p-4">
-              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
-                <Wand className="h-6 w-6 text-primary" />
-              </div>
-              <span className="text-sm font-medium text-center">AI Name</span>
-            </CardContent>
-          </Card>
-          
-          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/logo')}>
-            <CardContent className="flex flex-col items-center justify-center p-4">
-              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
-                <Image className="h-6 w-6 text-primary" />
-              </div>
-              <span className="text-sm font-medium text-center">AI Logo</span>
-            </CardContent>
-          </Card>
-        </section>
-
-        {/* Tips for Good Team Name */}
-        <section>
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-semibold">Tips for Good Team Name</h2>
-            </div>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/blogs')}>
-              View All
-            </Button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {recentBlogs.map((blog) => (
-              <Card key={blog.id} className="overflow-hidden hover:shadow-md transition-all cursor-pointer" onClick={() => navigate(`/blogs/${blog.id}`)}>
-                <div className="aspect-video w-full overflow-hidden">
-                  <img 
-                    src={blog.image} 
-                    alt={blog.title}
-                    className="w-full h-full object-cover transition-all hover:scale-105"
-                    onError={(e) => {
-                      // Fallback to a default sports image if the original fails to load
-                      const target = e.target as HTMLImageElement;
-                      target.src = "https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60";
-                    }}
-                  />
-                </div>
-                <CardContent className="p-4">
-                  <div className="space-y-2">
-                    <div className="text-sm text-muted-foreground">{blog.date}</div>
-                    <h3 className="font-semibold">{blog.title}</h3>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        {/* Player Rankings with Tabs */}
-        <section>
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <Award className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-semibold">Player Rankings</h2>
-            </div>
-            <Button variant="ghost" size="sm" onClick={() => navigate('/rankings')}>
-              View All
-            </Button>
-          </div>
-          <Card>
-            <CardContent className="p-4">
-              <Tabs defaultValue="football" className="w-full">
-                <TabsList className="grid grid-cols-4 mb-4">
-                  <TabsTrigger value="football">Football</TabsTrigger>
-                  <TabsTrigger value="basketball">Basketball</TabsTrigger>
-                  <TabsTrigger value="baseball">Baseball</TabsTrigger>
-                  <TabsTrigger value="hockey">Hockey</TabsTrigger>
-                </TabsList>
-                
-                {Object.keys(PLAYER_RANKINGS).map((sport) => (
-                  <TabsContent key={sport} value={sport}>
-                    <ScrollArea className="h-[350px]">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="w-12">Rank</TableHead>
-                            <TableHead>Player</TableHead>
-                            <TableHead>Team</TableHead>
-                            <TableHead>Pos</TableHead>
-                            <TableHead>League</TableHead>
-                            <TableHead>Best %</TableHead>
-                            <TableHead>Worst %</TableHead>
-                            <TableHead className="text-right">Trend</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {PLAYER_RANKINGS[sport as keyof typeof PLAYER_RANKINGS].map((player) => (
-                            <TableRow key={player.id} className="hover:bg-muted/50">
-                              <TableCell className="font-medium">
-                                <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-                                  {player.rank}
-                                </div>
-                              </TableCell>
-                              <TableCell className="font-medium">{player.name}</TableCell>
-                              <TableCell>
-                                <div className="flex items-center gap-2">
-                                  <img 
-                                    src={player.teamLogo} 
-                                    alt={player.team} 
-                                    className="h-6 w-6 object-contain"
-                                    onError={(e) => {
-                                      // Fallback if team logo fails to load
-                                      const target = e.target as HTMLImageElement;
-                                      target.src = "https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=50&q=60";
-                                    }}
-                                  />
-                                  <span>{player.team}</span>
-                                </div>
-                              </TableCell>
-                              <TableCell>{player.position}</TableCell>
-                              <TableCell>{player.league}</TableCell>
-                              <TableCell className="text-green-600">{player.bestPerf}</TableCell>
-                              <TableCell className="text-red-600">{player.worstPerf}</TableCell>
-                              <TableCell className="text-right">
-                                {renderTrendIcon(player.trend)}
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </ScrollArea>
-                  </TabsContent>
-                ))}
-              </Tabs>
-            </CardContent>
-          </Card>
-        </section>
-      </main>
-
-      {/* Bottom Navigation */}
-      <BottomNavigation />
+      </SidebarProvider>
     </div>
   );
 };

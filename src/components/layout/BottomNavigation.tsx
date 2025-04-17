@@ -14,16 +14,6 @@ const BottomNavigation = () => {
       path: '/portal',
     },
     {
-      icon: <Search className="h-6 w-6" />,
-      label: 'Search',
-      path: '/search',
-    },
-    {
-      icon: <Wand className="h-6 w-6" />,
-      label: 'AI Tools',
-      path: '/suggestions',
-    },
-    {
       icon: <Heart className="h-6 w-6" />,
       label: 'Favorites',
       path: '/favorites',
@@ -32,6 +22,16 @@ const BottomNavigation = () => {
       icon: <User className="h-6 w-6" />,
       label: 'Profile',
       path: '/profile',
+    },
+    {
+      icon: <Search className="h-6 w-6" />,
+      label: 'Search',
+      path: '/search',
+    },
+    {
+      icon: <Wand className="h-6 w-6" />,
+      label: 'AI Tools',
+      path: '/suggestions',
     },
   ];
 
