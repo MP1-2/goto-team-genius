@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Heart, Home, User, LogOut } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import {
