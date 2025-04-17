@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { Search } from 'lucide-react';
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -21,10 +22,10 @@ const HeroSection = () => {
           <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
             <Button 
               variant="default"
-              className="flex-1 bg-white text-[#4566E8] hover:bg-white/90"
+              className="flex-1 bg-white text-[#4566E8] hover:bg-white/90 text-lg py-6"
               onClick={handleCheckName}
             >
-              Check Name
+              <Search className="mr-2 h-5 w-5" /> Check Name
             </Button>
           </div>
         </div>

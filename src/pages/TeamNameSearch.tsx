@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, ArrowLeft, Clock, Heart, Lock } from 'lucide-react';
+import { Search, ArrowLeft, Clock, Heart, Lock, LogIn } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PlatformAvailability from '@/components/shared/PlatformAvailability';
 import { toast } from 'sonner';
@@ -181,48 +181,54 @@ const TeamNameSearch: React.FC = () => {
           <div className="mt-6 animate-fade-in rounded-lg border bg-card p-6 shadow-sm">
             <h2 className="text-2xl font-bold">{searchResult.name}</h2>
             
-            {!isLoggedIn ? (
-              <div className="mt-4 p-4 bg-muted/50 rounded-lg">
-                <div className="flex flex-col items-center space-y-3 text-center">
-                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Lock className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-medium">Login Required</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Please log in to view name availability and reserve team names
-                  </p>
-                  <Button onClick={handleLogin} className="mt-2">
-                    Login to Continue
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <>
-                <div className="mt-4">
-                  <h3 className="mb-2 text-sm font-medium text-muted-foreground">
-                    Availability Status
-                  </h3>
-                  <PlatformAvailability platforms={searchResult.platforms} />
-                </div>
-                
-                <div className="mt-6">
-                  {searchResult.platforms.some((p) => p.available) ? (
-                    <Button className="w-full" onClick={handleReserve}>
-                      Reserve This Name
-                    </Button>
-                  ) : (
-                    <div className="text-center text-sm text-muted-foreground">
-                      This name is not available on any platform.
-                      <div className="mt-2">
-                        <Button variant="outline" onClick={() => navigate('/suggestions')}>
-                          Get AI Suggestions
-                        </Button>
-                      </div>
+            <div className="mt-4">
+              <h3 className="mb-2 text-sm font-medium text-muted-foreground">
+                Availability Status
+              </h3>
+              <PlatformAvailability platforms={searchResult.platforms} />
+            </div>
+            
+            <div className="mt-6">
+              {!isLoggedIn && (
+                <div className="p-4 bg-muted/30 rounded-lg mb-4 border border-primary/20">
+                  <div className="flex flex-col items-center space-y-3 text-center">
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Lock className="h-6 w-6 text-primary" />
                     </div>
-                  )}
+                    <h3 className="text-lg font-medium">Secure Your Team Name</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Log in to GotoGuys to ensure exclusivity and reserve your team name across all fantasy sports platforms
+                    </p>
+                    <Button onClick={handleLogin} className="mt-2 w-full" size="lg">
+                      <LogIn className="mr-2 h-5 w-5" /> Log in to GotoGuys
+                    </Button>
+                  </div>
                 </div>
-              </>
-            )}
+              )}
+
+              {isLoggedIn && (
+                <Button 
+                  className="w-full" 
+                  onClick={handleReserve} 
+                  disabled={!searchResult.platforms.some(p => p.available)}
+                >
+                  {searchResult.platforms.some(p => p.available) ? 
+                    'Reserve This Name' : 
+                    'This name is not available on any platform'}
+                </Button>
+              )}
+
+              {!isLoggedIn && !searchResult.platforms.some(p => p.available) && (
+                <div className="text-center text-sm text-muted-foreground mt-4">
+                  This name is not available on any platform.
+                  <div className="mt-2">
+                    <Button variant="outline" onClick={() => navigate('/suggestions')}>
+                      Get AI Suggestions
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
