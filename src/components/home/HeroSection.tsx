@@ -108,14 +108,6 @@ const HeroSection = () => {
           {searchResult && (
             <div className="w-full max-w-2xl mx-auto">
               <Card className="bg-white text-gray-900 p-6 rounded-lg shadow-lg animate-in fade-in duration-300">
-                <div className="mb-4 w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center">
-                  <img 
-                    src="/lovable-uploads/ec71341c-a362-44f6-b970-0f1bb995671b.png" 
-                    alt="Team Name Availability" 
-                    className="max-w-full max-h-full object-contain"
-                  />
-                </div>
-
                 <h2 className="text-2xl font-bold text-[#4566E8] mb-4">{searchResult.name}</h2>
                 
                 <div className="mb-4">
