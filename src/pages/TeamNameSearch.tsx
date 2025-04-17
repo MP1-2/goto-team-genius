@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, ArrowLeft, Clock, Heart } from 'lucide-react';
+import { Search, ArrowLeft, Clock, Heart, Lock } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import PlatformAvailability from '@/components/shared/PlatformAvailability';
 import { toast } from 'sonner';
@@ -18,6 +18,7 @@ const TeamNameSearch: React.FC = () => {
   } | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [showRecentSearches, setShowRecentSearches] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Mock data for recently searched names
   const recentSearches = [
@@ -25,6 +26,12 @@ const TeamNameSearch: React.FC = () => {
     { id: '2', name: 'Hoop Dreams', searchedAt: '2025-04-14T14:45:00Z' },
     { id: '3', name: 'Diamond Dynamos', searchedAt: '2025-04-13T09:15:00Z' },
   ];
+
+  // Check if user is logged in
+  useEffect(() => {
+    const userInfo = localStorage.getItem('userInfo');
+    setIsLoggedIn(!!userInfo);
+  }, []);
 
   // Check for pre-populated search query from location state
   useEffect(() => {
@@ -85,9 +92,7 @@ const TeamNameSearch: React.FC = () => {
 
   const handleReserve = () => {
     // Check if user is logged in before proceeding to reservation
-    const userInfo = localStorage.getItem('userInfo');
-    
-    if (!userInfo) {
+    if (!isLoggedIn) {
       toast.error('Please log in to reserve this name');
       // Save team name in session storage so we can redirect back after login
       sessionStorage.setItem('pendingReservation', searchResult?.name || '');
@@ -99,6 +104,14 @@ const TeamNameSearch: React.FC = () => {
     navigate('/reservation', { state: { teamName: searchResult?.name } });
   };
 
+  const handleLogin = () => {
+    // Save team name in session storage so we can redirect back after login
+    if (searchResult) {
+      sessionStorage.setItem('pendingReservation', searchResult.name);
+    }
+    navigate('/login');
+  };
+
   return (
     <div className="min-h-screen bg-background pb-6">
       {/* Header */}
@@ -107,7 +120,7 @@ const TeamNameSearch: React.FC = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate('/portal')}
+            onClick={() => navigate('/')}
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -168,29 +181,48 @@ const TeamNameSearch: React.FC = () => {
           <div className="mt-6 animate-fade-in rounded-lg border bg-card p-6 shadow-sm">
             <h2 className="text-2xl font-bold">{searchResult.name}</h2>
             
-            <div className="mt-4">
-              <h3 className="mb-2 text-sm font-medium text-muted-foreground">
-                Availability Status
-              </h3>
-              <PlatformAvailability platforms={searchResult.platforms} />
-            </div>
-            
-            <div className="mt-6">
-              {searchResult.platforms.some((p) => p.available) ? (
-                <Button className="w-full" onClick={handleReserve}>
-                  Reserve This Name
-                </Button>
-              ) : (
-                <div className="text-center text-sm text-muted-foreground">
-                  This name is not available on any platform.
-                  <div className="mt-2">
-                    <Button variant="outline" onClick={() => navigate('/suggestions')}>
-                      Get AI Suggestions
-                    </Button>
+            {!isLoggedIn ? (
+              <div className="mt-4 p-4 bg-muted/50 rounded-lg">
+                <div className="flex flex-col items-center space-y-3 text-center">
+                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Lock className="h-6 w-6 text-primary" />
                   </div>
+                  <h3 className="text-lg font-medium">Login Required</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Please log in to view name availability and reserve team names
+                  </p>
+                  <Button onClick={handleLogin} className="mt-2">
+                    Login to Continue
+                  </Button>
                 </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              <>
+                <div className="mt-4">
+                  <h3 className="mb-2 text-sm font-medium text-muted-foreground">
+                    Availability Status
+                  </h3>
+                  <PlatformAvailability platforms={searchResult.platforms} />
+                </div>
+                
+                <div className="mt-6">
+                  {searchResult.platforms.some((p) => p.available) ? (
+                    <Button className="w-full" onClick={handleReserve}>
+                      Reserve This Name
+                    </Button>
+                  ) : (
+                    <div className="text-center text-sm text-muted-foreground">
+                      This name is not available on any platform.
+                      <div className="mt-2">
+                        <Button variant="outline" onClick={() => navigate('/suggestions')}>
+                          Get AI Suggestions
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>

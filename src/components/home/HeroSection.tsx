@@ -7,7 +7,7 @@ const HeroSection = () => {
   const navigate = useNavigate();
 
   const handleCheckName = () => {
-    navigate('/login');
+    navigate('/search');
   };
 
   return (

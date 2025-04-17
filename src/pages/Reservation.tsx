@@ -15,13 +15,20 @@ const MOCK_PURCHASED_NAMES = [
 const Reservation: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const teamName = location.state?.teamName || 'Team Name';
+  const teamName = location.state?.teamName || '';
   const [isLoading, setIsLoading] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isReserved, setIsReserved] = useState(false);
   const [purchasedNames] = useState(MOCK_PURCHASED_NAMES);
 
   useEffect(() => {
+    // Check if team name is provided
+    if (!teamName) {
+      toast.error('No team name provided');
+      navigate('/search');
+      return;
+    }
+
     // Check if user is logged in
     const userInfo = localStorage.getItem('userInfo');
     
