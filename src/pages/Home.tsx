@@ -1,3 +1,4 @@
+
 import React, { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -59,6 +60,7 @@ const Home: React.FC = () => {
   const blogsRef = useRef<HTMLDivElement>(null);
   const rankingsRef = useRef<HTMLDivElement>(null);
   const partnershipsRef = useRef<HTMLDivElement>(null);
+  const contactFormRef = useRef<HTMLDivElement>(null);
 
   const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
     if (ref.current) {
@@ -72,6 +74,17 @@ const Home: React.FC = () => {
 
   const redirectToSearch = () => {
     navigate('/search');
+  };
+
+  const handleViewAllArticles = () => {
+    // For now, this would navigate to a blogs page
+    // In the future, this could be a dedicated blogs page with categories
+    navigate('/blogs');
+  };
+
+  const handleReadMore = (articleId: string) => {
+    // This would navigate to a specific article page
+    navigate(`/blogs/${articleId}`);
   };
 
   return (
@@ -131,7 +144,7 @@ const Home: React.FC = () => {
                 <Link to="/login">Get Started</Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="flex-1 bg-white text-primary hover:bg-white/90">
-                <Link to="/search">Check Name</Link>
+                <Link to="/login">Check Name</Link>
               </Button>
             </div>
           </div>
@@ -148,7 +161,7 @@ const Home: React.FC = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <Card className="overflow-hidden border-2 hover:border-primary transition-all">
               <CardContent className="p-6 flex flex-col items-center text-center space-y-4">
                 <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center text-primary">
@@ -159,7 +172,7 @@ const Home: React.FC = () => {
                   Secure an exclusive team name across ESPN, Yahoo, Sleeper, NFL, and other fantasy platforms.
                 </p>
                 <Button asChild variant="outline">
-                  <Link to="/search">Check Availability</Link>
+                  <Link to="/login">Get Started</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -174,7 +187,7 @@ const Home: React.FC = () => {
                   Let our AI generate unique, creative, and personalized team name ideas based on your preferences.
                 </p>
                 <Button asChild variant="outline">
-                  <Link to="/suggestions">Get Suggestions</Link>
+                  <Link to="/login">Get Started</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -189,7 +202,22 @@ const Home: React.FC = () => {
                   Create professional-looking team logos that perfectly match your team name and style.
                 </p>
                 <Button asChild variant="outline">
-                  <Link to="/logo">Create Logo</Link>
+                  <Link to="/login">Get Started</Link>
+                </Button>
+              </CardContent>
+            </Card>
+            
+            <Card className="overflow-hidden border-2 hover:border-primary transition-all">
+              <CardContent className="p-6 flex flex-col items-center text-center space-y-4">
+                <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                  <CheckCircle className="h-7 w-7" />
+                </div>
+                <h3 className="text-xl font-semibold">Verified Checkmark</h3>
+                <p className="text-muted-foreground">
+                  Display an exclusive verification badge next to your team name across all supported fantasy platforms.
+                </p>
+                <Button asChild variant="outline">
+                  <Link to="/login">Get Started</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -215,7 +243,11 @@ const Home: React.FC = () => {
                     <div className="text-sm text-muted-foreground">{post.date}</div>
                     <h3 className="text-xl font-semibold">{post.title}</h3>
                     <p className="text-muted-foreground">{post.excerpt}</p>
-                    <Button variant="link" className="p-0 h-auto text-primary">
+                    <Button 
+                      variant="link" 
+                      className="p-0 h-auto text-primary"
+                      onClick={() => handleReadMore(post.id)}
+                    >
                       Read More <ArrowRight className="h-4 w-4 ml-1" />
                     </Button>
                   </div>
@@ -225,7 +257,7 @@ const Home: React.FC = () => {
           </div>
           
           <div className="mt-10 text-center">
-            <Button variant="outline">View All Articles</Button>
+            <Button variant="outline" onClick={handleViewAllArticles}>View All Articles</Button>
           </div>
         </div>
       </section>
@@ -353,7 +385,56 @@ const Home: React.FC = () => {
             <p className="text-muted-foreground mb-6">
               Interested in partnering with GotoGuys? We're always looking to expand our network of fantasy sports platforms.
             </p>
-            <Button>Contact Us</Button>
+            <Button onClick={() => scrollToSection(contactFormRef)}>Contact Us</Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Form Section */}
+      <section ref={contactFormRef} className="py-16 bg-white">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="flex flex-col items-center text-center space-y-4 mb-12">
+            <h2 className="text-3xl font-bold">Contact Us</h2>
+            <p className="text-muted-foreground max-w-2xl">
+              Have questions or interested in partnering with us? Fill out the form below and we'll get back to you as soon as possible.
+            </p>
+          </div>
+          
+          <div className="max-w-md mx-auto space-y-6">
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="first-name" className="block text-sm font-medium mb-1">First Name</label>
+                  <Input id="first-name" placeholder="John" />
+                </div>
+                <div>
+                  <label htmlFor="last-name" className="block text-sm font-medium mb-1">Last Name</label>
+                  <Input id="last-name" placeholder="Doe" />
+                </div>
+              </div>
+              
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
+                <Input id="email" type="email" placeholder="john@example.com" />
+              </div>
+              
+              <div>
+                <label htmlFor="company" className="block text-sm font-medium mb-1">Company</label>
+                <Input id="company" placeholder="Your Company" />
+              </div>
+              
+              <div>
+                <label htmlFor="message" className="block text-sm font-medium mb-1">Message</label>
+                <textarea 
+                  id="message" 
+                  rows={4} 
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  placeholder="Tell us about your inquiry..."
+                />
+              </div>
+              
+              <Button className="w-full">Send Message</Button>
+            </div>
           </div>
         </div>
       </section>
