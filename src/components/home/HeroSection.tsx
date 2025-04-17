@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -68,8 +69,8 @@ const HeroSection = () => {
   return (
     <section className="relative bg-[#4566E8] text-white py-16">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="flex flex-col md:flex-row items-center gap-8">
-          <div className="flex flex-col items-start text-left space-y-6 md:w-1/2">
+        <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center text-center space-y-6 max-w-3xl mx-auto mb-10">
             <h1 className="text-4xl md:text-5xl font-bold leading-tight">Find Your Perfect Fantasy Team Name</h1>
             <p className="text-xl text-white/90 max-w-2xl">
               Reserve exclusive names, get AI-powered suggestions, and create custom logos for your fantasy sports teams
@@ -97,19 +98,28 @@ const HeroSection = () => {
             </div>
           </div>
           
-          <div className="md:w-1/2 w-full">
-            {!searchResult && !isSearching && (
-              <div className="hidden md:flex items-center justify-center h-full min-h-[300px] bg-white/10 rounded-lg border border-white/20">
-                <div className="flex flex-col items-center space-y-4">
-                  <Images className="h-16 w-16 text-white/50" />
-                  <p className="text-white/80 text-lg text-center">
-                    Enter a team name to check availability
-                  </p>
-                </div>
+          {/* Default state when no search has been performed */}
+          {!searchResult && !isSearching && (
+            <div className="flex items-center justify-center w-full max-w-2xl mx-auto min-h-[300px]">
+              <div className="flex flex-col items-center space-y-4 bg-white/10 rounded-lg border border-white/20 p-8 w-full">
+                <Images className="h-16 w-16 text-white/50" />
+                <p className="text-white/80 text-lg text-center">
+                  Enter a team name to check availability
+                </p>
               </div>
-            )}
-
-            {searchResult && (
+            </div>
+          )}
+          
+          {/* Loading state */}
+          {isSearching && (
+            <div className="flex items-center justify-center w-full max-w-2xl mx-auto min-h-[300px] bg-white/10 rounded-lg border border-white/20">
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-white border-t-transparent"></div>
+            </div>
+          )}
+          
+          {/* Search results */}
+          {searchResult && (
+            <div className="w-full max-w-2xl mx-auto">
               <Card className="bg-white text-gray-900 p-6 rounded-lg shadow-lg animate-in fade-in duration-300">
                 <div className="mb-4 w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center">
                   <img 
@@ -159,14 +169,8 @@ const HeroSection = () => {
                   )}
                 </div>
               </Card>
-            )}
-            
-            {isSearching && (
-              <div className="flex items-center justify-center h-full min-h-[300px] bg-white/10 rounded-lg border border-white/20">
-                <div className="h-10 w-10 animate-spin rounded-full border-4 border-white border-t-transparent"></div>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </section>
