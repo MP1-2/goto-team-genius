@@ -100,7 +100,7 @@ const Home: React.FC = () => {
               onClick={() => scrollToSection(partnershipsRef)} 
               className="text-sm font-medium hover:text-primary transition-colors"
             >
-              <span className="flex items-center gap-1"><HandShake className="h-4 w-4" /> Partnerships</span>
+              <span className="flex items-center gap-1"><Handshake className="h-4 w-4" /> Partnerships</span>
             </button>
             <button 
               onClick={() => scrollToSection(solutionRef)} 
