@@ -1,3 +1,4 @@
+
 import React, { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -140,6 +141,9 @@ const Home: React.FC = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
               <Button asChild size="lg" className="flex-1">
+                <Link to="/search">Check Name</Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="flex-1 bg-white text-primary hover:bg-white/90">
                 <Link to="/search">Check Name</Link>
               </Button>
             </div>
