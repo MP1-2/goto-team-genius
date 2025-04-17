@@ -27,7 +27,7 @@ const Login: React.FC = () => {
     
     // Simulate login API call with basic validation
     setTimeout(() => {
-      // Simple email validation (you might want to replace this with more robust validation)
+      // Simple email validation
       const isValidEmail = email.includes('@');
       const isValidPassword = password.length >= 6;
 
@@ -42,7 +42,8 @@ const Login: React.FC = () => {
         }
         
         toast.success('Login successful');
-        navigate('/home');
+        // Redirect to the main app flow
+        navigate('/search');
       } else {
         toast.error('Invalid email or password');
         setIsLoading(false);

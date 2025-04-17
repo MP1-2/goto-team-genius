@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 // Pages
+import Index from "./pages/Index";
 import Intro from "./pages/Intro";
 import Onboarding from "./pages/Onboarding";
 import Home from "./pages/Home";
@@ -34,10 +35,10 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Index />} />
           <Route path="/intro" element={<Intro />} /> {/* Keep intro only for mobile app */}
           <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/home" element={<Navigate to="/" replace />} />
+          <Route path="/home" element={<Home />} /> {/* Marketing homepage now accessible directly */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/search" element={<TeamNameSearch />} />
