@@ -23,6 +23,7 @@ import Profile from "./pages/Profile";
 import Payment from "./pages/Payment";
 import Blogs from "./pages/Blogs";
 import BlogPost from "./pages/BlogPost";
+import Contact from "./pages/Contact";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ const App = () => (
           <Route path="/payment" element={<Payment />} />
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/blogs/:id" element={<BlogPost />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

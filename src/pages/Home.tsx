@@ -1,4 +1,3 @@
-
 import React, { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -77,14 +76,15 @@ const Home: React.FC = () => {
   };
 
   const handleViewAllArticles = () => {
-    // For now, this would navigate to a blogs page
-    // In the future, this could be a dedicated blogs page with categories
     navigate('/blogs');
   };
 
   const handleReadMore = (articleId: string) => {
-    // This would navigate to a specific article page
     navigate(`/blogs/${articleId}`);
+  };
+
+  const handleContactUs = () => {
+    navigate('/contact');
   };
 
   return (
@@ -298,7 +298,6 @@ const Home: React.FC = () => {
               </div>
             </TabsContent>
             
-            {/* Similar content for other tabs */}
             <TabsContent value="basketball" className="border rounded-lg p-4">
               <div className="space-y-4">
                 {PLAYER_RANKINGS.filter(player => player.sport === 'Basketball').map((player) => (
@@ -385,56 +384,25 @@ const Home: React.FC = () => {
             <p className="text-muted-foreground mb-6">
               Interested in partnering with GotoGuys? We're always looking to expand our network of fantasy sports platforms.
             </p>
-            <Button onClick={() => scrollToSection(contactFormRef)}>Contact Us</Button>
+            <Button onClick={handleContactUs}>Contact Us</Button>
           </div>
         </div>
       </section>
 
-      {/* Contact Form Section */}
+      {/* Contact Form Section - Now just shows a teaser and directs to contact page */}
       <section ref={contactFormRef} className="py-16 bg-white">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center text-center space-y-4 mb-12">
-            <h2 className="text-3xl font-bold">Contact Us</h2>
+            <h2 className="text-3xl font-bold">Get In Touch</h2>
             <p className="text-muted-foreground max-w-2xl">
-              Have questions or interested in partnering with us? Fill out the form below and we'll get back to you as soon as possible.
+              Have questions or interested in partnering with us? We'd love to hear from you!
             </p>
           </div>
           
-          <div className="max-w-md mx-auto space-y-6">
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="first-name" className="block text-sm font-medium mb-1">First Name</label>
-                  <Input id="first-name" placeholder="John" />
-                </div>
-                <div>
-                  <label htmlFor="last-name" className="block text-sm font-medium mb-1">Last Name</label>
-                  <Input id="last-name" placeholder="Doe" />
-                </div>
-              </div>
-              
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
-                <Input id="email" type="email" placeholder="john@example.com" />
-              </div>
-              
-              <div>
-                <label htmlFor="company" className="block text-sm font-medium mb-1">Company</label>
-                <Input id="company" placeholder="Your Company" />
-              </div>
-              
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium mb-1">Message</label>
-                <textarea 
-                  id="message" 
-                  rows={4} 
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  placeholder="Tell us about your inquiry..."
-                />
-              </div>
-              
-              <Button className="w-full">Send Message</Button>
-            </div>
+          <div className="max-w-md mx-auto text-center">
+            <Button onClick={handleContactUs} size="lg" className="mt-4">
+              Contact Us
+            </Button>
           </div>
         </div>
       </section>
