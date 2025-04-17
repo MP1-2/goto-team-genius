@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Lock, LogIn } from 'lucide-react';
+import { Search, Lock, LogIn, Images } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import PlatformAvailability from '@/components/shared/PlatformAvailability';
 import { toast } from 'sonner';
@@ -18,7 +17,6 @@ const HeroSection = () => {
   } | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Check if user is logged in
   React.useEffect(() => {
     const userInfo = localStorage.getItem('userInfo');
     setIsLoggedIn(!!userInfo);
@@ -32,9 +30,7 @@ const HeroSection = () => {
     
     setIsSearching(true);
     
-    // Simulate API call
     setTimeout(() => {
-      // For demo, generate random availability
       const result = {
         name: searchQuery,
         platforms: [
@@ -51,10 +47,8 @@ const HeroSection = () => {
   };
 
   const handleReserve = () => {
-    // Check if user is logged in before proceeding to reservation
     if (!isLoggedIn) {
       toast.error('Please log in to reserve this name');
-      // Save team name in session storage so we can redirect back after login
       sessionStorage.setItem('pendingReservation', searchResult?.name || '');
       navigate('/login');
       return;
@@ -65,7 +59,6 @@ const HeroSection = () => {
   };
 
   const handleLogin = () => {
-    // Save team name in session storage so we can redirect back after login
     if (searchResult) {
       sessionStorage.setItem('pendingReservation', searchResult.name);
     }
@@ -104,10 +97,28 @@ const HeroSection = () => {
             </div>
           </div>
           
-          {/* Search Results Card */}
           <div className="md:w-1/2 w-full">
+            {!searchResult && !isSearching && (
+              <div className="hidden md:flex items-center justify-center h-full min-h-[300px] bg-white/10 rounded-lg border border-white/20">
+                <div className="flex flex-col items-center space-y-4">
+                  <Images className="h-16 w-16 text-white/50" />
+                  <p className="text-white/80 text-lg text-center">
+                    Enter a team name to check availability
+                  </p>
+                </div>
+              </div>
+            )}
+
             {searchResult && (
               <Card className="bg-white text-gray-900 p-6 rounded-lg shadow-lg animate-in fade-in duration-300">
+                <div className="mb-4 w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center">
+                  <img 
+                    src="/lovable-uploads/ec71341c-a362-44f6-b970-0f1bb995671b.png" 
+                    alt="Team Name Availability" 
+                    className="max-w-full max-h-full object-contain"
+                  />
+                </div>
+
                 <h2 className="text-2xl font-bold text-[#4566E8] mb-4">{searchResult.name}</h2>
                 
                 <div className="mb-4">
@@ -148,12 +159,6 @@ const HeroSection = () => {
                   )}
                 </div>
               </Card>
-            )}
-            
-            {!searchResult && !isSearching && (
-              <div className="hidden md:flex items-center justify-center h-full min-h-[300px] bg-white/10 rounded-lg border border-white/20">
-                <p className="text-white/80 text-lg">Enter a team name to check availability</p>
-              </div>
             )}
             
             {isSearching && (
