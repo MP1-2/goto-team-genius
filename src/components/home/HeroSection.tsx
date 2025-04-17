@@ -5,24 +5,25 @@ import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
   return (
-    <section className="relative bg-primary text-primary-foreground py-20">
+    <section className="relative bg-[#4566E8] text-white py-20">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex flex-col items-center text-center space-y-8 max-w-3xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-bold leading-tight">Find Your Perfect Fantasy Team Name</h1>
-          <p className="text-xl text-primary-foreground/90 max-w-2xl">
+          <p className="text-xl text-white/90 max-w-2xl">
             Reserve exclusive names, get AI-powered suggestions, and create custom logos for your fantasy sports teams
           </p>
           <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
-            <Button asChild size="lg" className="flex-1">
-              <Link to="/search">Check Name</Link>
+            <Button 
+              variant="ghost" 
+              className="flex-1 text-white border border-white hover:bg-white/10"
+            >
+              Check Name
             </Button>
             <Button 
-              asChild 
-              variant="outline" 
-              size="lg" 
-              className="flex-1 bg-white text-primary hover:bg-white/90"
+              className="flex-1"
+              onClick={() => window.location.href = '/login'}
             >
-              <Link to="/search">Check Name</Link>
+              Check Name
             </Button>
           </div>
         </div>
