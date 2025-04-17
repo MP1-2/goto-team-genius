@@ -71,7 +71,7 @@ const PaypalForm: React.FC<PaypalFormProps> = ({
             </>
           ) : (
             <>
-              Pay with PayPal
+              Continue to PayPal
               <ArrowRight className="ml-2 h-4 w-4" />
             </>
           )}

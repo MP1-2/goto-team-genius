@@ -229,9 +229,17 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
     // Reset any previous errors
     setErrorMessage(null);
     
-    // Randomly decide if payment should succeed (90% success rate for demo)
-    const shouldSucceed = Math.random() > 0.1;
-    simulatePaymentProcessing(shouldSucceed);
+    // Show PayPal login simulation
+    toast.info('Redirecting to PayPal login page...');
+    
+    // Simulate PayPal login and confirmation process
+    setTimeout(() => {
+      toast.info('Processing payment with PayPal...');
+      
+      // Randomly decide if payment should succeed (90% success rate for demo)
+      const shouldSucceed = Math.random() > 0.1;
+      simulatePaymentProcessing(shouldSucceed);
+    }, 1500);
   };
 
   const handleGooglePaySubmit = () => {
