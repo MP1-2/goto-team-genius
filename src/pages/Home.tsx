@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Sparkles, Bookmark, Image, ArrowRight, CheckCircle, Smartphone, Trophy, Handshake, Newspaper } from 'lucide-react';
+import { Search, Sparkles, Bookmark, Image, ArrowRight, CheckCircle, Smartphone, Trophy, Handshake, Newspaper, ShieldCheck } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import ActionCard from '@/components/home/ActionCard';
 import BottomNavigation from '@/components/layout/BottomNavigation';
@@ -59,7 +59,6 @@ const Home: React.FC = () => {
   const blogsRef = useRef<HTMLDivElement>(null);
   const rankingsRef = useRef<HTMLDivElement>(null);
   const partnershipsRef = useRef<HTMLDivElement>(null);
-  const contactFormRef = useRef<HTMLDivElement>(null);
 
   const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
     if (ref.current) {
@@ -210,11 +209,11 @@ const Home: React.FC = () => {
             <Card className="overflow-hidden border-2 hover:border-primary transition-all">
               <CardContent className="p-6 flex flex-col items-center text-center space-y-4">
                 <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                  <CheckCircle className="h-7 w-7" />
+                  <ShieldCheck className="h-7 w-7" />
                 </div>
                 <h3 className="text-xl font-semibold">Verified Checkmark</h3>
                 <p className="text-muted-foreground">
-                  Display an exclusive verification badge next to your team name across all supported fantasy platforms.
+                  Display an exclusive verification badge next to your team name, ensuring its authenticity and uniqueness.
                 </p>
                 <Button asChild variant="outline">
                   <Link to="/login">Get Started</Link>
@@ -385,24 +384,6 @@ const Home: React.FC = () => {
               Interested in partnering with GotoGuys? We're always looking to expand our network of fantasy sports platforms.
             </p>
             <Button onClick={handleContactUs}>Contact Us</Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Form Section - Now just shows a teaser and directs to contact page */}
-      <section ref={contactFormRef} className="py-16 bg-white">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col items-center text-center space-y-4 mb-12">
-            <h2 className="text-3xl font-bold">Get In Touch</h2>
-            <p className="text-muted-foreground max-w-2xl">
-              Have questions or interested in partnering with us? We'd love to hear from you!
-            </p>
-          </div>
-          
-          <div className="max-w-md mx-auto text-center">
-            <Button onClick={handleContactUs} size="lg" className="mt-4">
-              Contact Us
-            </Button>
           </div>
         </div>
       </section>
