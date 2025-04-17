@@ -1,10 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft, Save, Edit, Check, CreditCard, LogOut, Copy } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import BottomNavigation from '@/components/layout/BottomNavigation';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -160,7 +158,7 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-6">
       <div className="sticky top-0 z-10 bg-background">
         <div className="flex items-center justify-between border-b px-4 py-3">
           <div className="flex items-center">
@@ -415,8 +413,6 @@ const Profile: React.FC = () => {
           </div>
         )}
       </div>
-
-      <BottomNavigation />
     </div>
   );
 };

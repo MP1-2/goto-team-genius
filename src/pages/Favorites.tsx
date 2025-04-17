@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import BottomNavigation from '@/components/layout/BottomNavigation';
 import { toast } from 'sonner';
 
 const INITIAL_FAVORITES = [
@@ -27,7 +26,7 @@ const Favorites: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-6">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background">
         <div className="flex items-center border-b px-4 py-3">
@@ -88,8 +87,6 @@ const Favorites: React.FC = () => {
           </div>
         )}
       </div>
-
-      <BottomNavigation />
     </div>
   );
 };
