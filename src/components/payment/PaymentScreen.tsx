@@ -79,6 +79,13 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
     });
   };
 
+  // Clear error function to be passed to forms
+  const clearError = () => {
+    if (errorMessage) {
+      setErrorMessage(null);
+    }
+  };
+
   const handlePaymentMethodChange = (value: PaymentMethod) => {
     setPaymentMethod(value);
     setErrorMessage(null);
@@ -168,6 +175,9 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
       return;
     }
     
+    // Reset any previous errors
+    setErrorMessage(null);
+    
     // Move to verification instead of direct payment
     setShowCardDetails(false);
     setShowVerificationDialog(true);
@@ -175,6 +185,9 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
 
   const handleVerificationMethodSelect = (method: VerificationMethod) => {
     setVerificationMethod(method);
+    
+    // Reset OTP value when going to OTP screen
+    setOtpValue('');
     
     // Simulate sending verification code
     toast.info(`Verification code ${method === 'sms' ? 'sent via SMS' : 'will be sent via phone call'} to ${formData.phone}`);
@@ -191,6 +204,9 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
       setErrorMessage('Please enter the complete verification code');
       return;
     }
+    
+    // Reset any previous errors
+    setErrorMessage(null);
     
     // Randomly decide if payment should succeed (90% success rate for demo)
     const shouldSucceed = Math.random() > 0.1;
@@ -210,12 +226,18 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
       return;
     }
     
+    // Reset any previous errors
+    setErrorMessage(null);
+    
     // Randomly decide if payment should succeed (90% success rate for demo)
     const shouldSucceed = Math.random() > 0.1;
     simulatePaymentProcessing(shouldSucceed);
   };
 
   const handleGooglePaySubmit = () => {
+    // Reset any previous errors
+    setErrorMessage(null);
+    
     // Randomly decide if payment should succeed (90% success rate for demo)
     const shouldSucceed = Math.random() > 0.1;
     simulatePaymentProcessing(shouldSucceed);
@@ -288,6 +310,7 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
             onInputChange={handleInputChange}
             onSubmit={handleSubmitCardDetails}
             onCancel={() => setShowCardDetails(false)}
+            clearError={clearError}
           />
         </DialogContent>
       </Dialog>
@@ -336,6 +359,8 @@ const PaymentScreen: React.FC<PaymentScreenProps> = ({ teamName, onSuccess, onCa
             onBack={() => {
               setShowOtpDialog(false);
               setShowVerificationDialog(true);
+              // Reset OTP value when going back
+              setOtpValue('');
             }}
           />
         </DialogContent>

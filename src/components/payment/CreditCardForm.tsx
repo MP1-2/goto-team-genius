@@ -18,6 +18,7 @@ interface CreditCardFormProps {
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
+  clearError: () => void; // Added new prop for clearing errors
 }
 
 const CreditCardForm: React.FC<CreditCardFormProps> = ({
@@ -26,8 +27,17 @@ const CreditCardForm: React.FC<CreditCardFormProps> = ({
   isProcessing,
   onInputChange,
   onSubmit,
-  onCancel
+  onCancel,
+  clearError
 }) => {
+  // Handle input change and clear error if there was one
+  const handleFormInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onInputChange(e);
+    if (errorMessage) {
+      clearError();
+    }
+  };
+
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <ErrorAlert message={errorMessage} />
@@ -39,7 +49,7 @@ const CreditCardForm: React.FC<CreditCardFormProps> = ({
           name="nameOnCard" 
           placeholder="John Doe" 
           value={formData.nameOnCard}
-          onChange={onInputChange}
+          onChange={handleFormInputChange}
         />
       </div>
       <div className="space-y-2">
@@ -49,7 +59,7 @@ const CreditCardForm: React.FC<CreditCardFormProps> = ({
           name="cardNumber" 
           placeholder="1234 5678 9012 3456" 
           value={formData.cardNumber}
-          onChange={onInputChange}
+          onChange={handleFormInputChange}
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
@@ -60,7 +70,7 @@ const CreditCardForm: React.FC<CreditCardFormProps> = ({
             name="expiryDate" 
             placeholder="MM/YY" 
             value={formData.expiryDate}
-            onChange={onInputChange}
+            onChange={handleFormInputChange}
           />
         </div>
         <div className="space-y-2">
@@ -70,7 +80,7 @@ const CreditCardForm: React.FC<CreditCardFormProps> = ({
             name="cvv" 
             placeholder="123" 
             value={formData.cvv}
-            onChange={onInputChange}
+            onChange={handleFormInputChange}
           />
         </div>
       </div>
@@ -81,7 +91,7 @@ const CreditCardForm: React.FC<CreditCardFormProps> = ({
           name="phone" 
           placeholder="+1 (555) 123-4567" 
           value={formData.phone}
-          onChange={onInputChange}
+          onChange={handleFormInputChange}
         />
       </div>
       
