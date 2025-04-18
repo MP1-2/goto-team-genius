@@ -77,25 +77,30 @@ export const usePaymentSubmission = ({
 
   const handleExternalPaymentSubmit = (e: FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.email) {
-      setErrorMessage('Please enter your email address');
-      return;
-    }
-    
-    if (paymentMethod === 'paypal' && !formData.accountId) {
-      setErrorMessage('Please enter your PayPal email or phone');
-      return;
-    }
-    
     setErrorMessage(null);
-    toast.info('Redirecting to PayPal login page...');
     
-    setTimeout(() => {
-      toast.info('Processing payment with PayPal...');
-      const shouldSucceed = Math.random() > 0.1;
-      simulatePaymentProcessing(shouldSucceed);
-    }, 1500);
+    // Open PayPal in a new window
+    const paypalWindow = window.open('https://www.paypal.com/signin', '_blank', 'width=500,height=600');
+    
+    // Monitor for window close
+    const checkWindow = setInterval(() => {
+      if (paypalWindow?.closed) {
+        clearInterval(checkWindow);
+        
+        // Mock successful payment after PayPal window is closed
+        toast.info('Processing payment with PayPal...');
+        
+        setTimeout(() => {
+          // Show payment confirmation toast
+          toast.info('Payment confirmed! Finalizing your purchase...');
+          
+          setTimeout(() => {
+            const shouldSucceed = Math.random() > 0.1;
+            simulatePaymentProcessing(shouldSucceed);
+          }, 1500);
+        }, 1000);
+      }
+    }, 500);
   };
 
   const handleGooglePaySubmit = () => {

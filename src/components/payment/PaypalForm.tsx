@@ -1,28 +1,21 @@
 
 import React from 'react';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, CheckCircle } from 'lucide-react';
 import ErrorAlert from './ErrorAlert';
 import SuccessAlert from './SuccessAlert';
+import Image from '@/components/ui/image';
 
 interface PaypalFormProps {
-  formData: {
-    email: string;
-    accountId: string;
-  };
   errorMessage: string | null;
   paymentStatus: 'idle' | 'processing' | 'success' | 'failed';
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
 }
 
 const PaypalForm: React.FC<PaypalFormProps> = ({
-  formData,
   errorMessage,
   paymentStatus,
-  onInputChange,
   onSubmit,
   onCancel
 }) => {
@@ -30,27 +23,15 @@ const PaypalForm: React.FC<PaypalFormProps> = ({
     <form onSubmit={onSubmit} className="space-y-4">
       <ErrorAlert message={errorMessage} />
       
-      <div className="space-y-2">
-        <label htmlFor="email" className="text-sm font-medium">Your Email</label>
-        <Input 
-          id="email" 
-          name="email" 
-          type="email"
-          placeholder="your-email@example.com" 
-          value={formData.email}
-          onChange={onInputChange}
+      <div className="text-center">
+        <img 
+          src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-200px.png"
+          alt="PayPal"
+          className="h-12 mx-auto mb-4"
         />
-      </div>
-      
-      <div className="space-y-2">
-        <label htmlFor="accountId" className="text-sm font-medium">PayPal Email or Phone</label>
-        <Input 
-          id="accountId" 
-          name="accountId"
-          placeholder="your-paypal@example.com or phone" 
-          value={formData.accountId}
-          onChange={onInputChange}
-        />
+        <p className="text-sm text-muted-foreground mb-6">
+          You will be redirected to PayPal's secure payment page
+        </p>
       </div>
       
       {paymentStatus === 'success' && (
