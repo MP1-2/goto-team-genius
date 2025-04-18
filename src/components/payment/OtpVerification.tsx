@@ -29,15 +29,18 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({
   onSubmit,
   onBack
 }) => {
+  const isDisabled = paymentStatus === 'processing' || paymentStatus === 'success';
+
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <ErrorAlert message={errorMessage} />
       
       <div className="flex justify-center py-4">
-        <InputOTP 
+        <InputOTP
           maxLength={6}
           value={otpValue}
           onChange={setOtpValue}
+          disabled={isDisabled}
           render={({ slots }) => (
             <InputOTPGroup>
               {slots.map((slot, i) => (
@@ -55,7 +58,8 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({
       <div className="flex flex-col gap-2 pt-2">
         <Button 
           type="submit" 
-          disabled={paymentStatus === 'processing' || paymentStatus === 'success' || otpValue.length < 6}
+          disabled={otpValue.length < 6 || isDisabled}
+          className="w-full"
         >
           {paymentStatus === 'processing' ? (
             <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
@@ -76,13 +80,19 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({
           type="button" 
           variant="outline" 
           onClick={onBack}
-          disabled={paymentStatus === 'processing'}
+          disabled={isDisabled}
+          className="w-full"
         >
           Back
         </Button>
         
         <div className="text-center pt-2">
-          <Button variant="link" className="text-sm p-0 h-auto">
+          <Button 
+            variant="link" 
+            className="text-sm p-0 h-auto"
+            disabled={isDisabled}
+            type="button"
+          >
             Didn't receive a code? Resend
           </Button>
         </div>
