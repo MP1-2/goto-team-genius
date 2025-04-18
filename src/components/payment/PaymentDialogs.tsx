@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import CreditCardForm from './CreditCardForm';
@@ -6,7 +5,7 @@ import VerificationMethodSelector from './VerificationMethodSelector';
 import OtpVerification from './OtpVerification';
 import GooglePayForm from './GooglePayForm';
 import PaypalForm from './PaypalForm';
-import { PaymentMethod, PaymentStatus, VerificationMethod } from '@/hooks/usePaymentFlow';
+import { PaymentMethod, PaymentStatus, VerificationMethod } from '@/hooks/payment/types';
 
 interface GoogleAccount {
   email: string;

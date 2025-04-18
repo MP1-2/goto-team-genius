@@ -1,10 +1,12 @@
 
 import { FormEvent } from 'react';
+import { toast } from 'sonner';
 import { PaymentFormData, PaymentMethod, VerificationMethod } from './types';
 
 interface UsePaymentSubmissionProps {
   formData: PaymentFormData;
   paymentMethod: PaymentMethod;
+  otpValue: string;
   setErrorMessage: (message: string | null) => void;
   setShowCardDetails: (show: boolean) => void;
   setShowVerificationDialog: (show: boolean) => void;
@@ -15,6 +17,7 @@ interface UsePaymentSubmissionProps {
 export const usePaymentSubmission = ({
   formData,
   paymentMethod,
+  otpValue,
   setErrorMessage,
   setShowCardDetails,
   setShowVerificationDialog,

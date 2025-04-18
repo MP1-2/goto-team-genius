@@ -17,12 +17,16 @@ export const usePaymentFlow = ({ onSuccess }: UsePaymentFlowProps) => {
     setShowOtpDialog: state.setShowOtpDialog,
     setShowGooglePayDialog: state.setShowGooglePayDialog,
     setErrorMessage: state.setErrorMessage,
+    setFormData: state.setFormData,
+    formData: state.formData,
+    errorMessage: state.errorMessage,
     onSuccess
   });
   
   const submission = usePaymentSubmission({
     formData: state.formData,
     paymentMethod: state.paymentMethod,
+    otpValue: state.otpValue,
     setErrorMessage: state.setErrorMessage,
     setShowCardDetails: state.setShowCardDetails,
     setShowVerificationDialog: state.setShowVerificationDialog,
@@ -30,7 +34,7 @@ export const usePaymentFlow = ({ onSuccess }: UsePaymentFlowProps) => {
     simulatePaymentProcessing: handlers.simulatePaymentProcessing
   });
 
-  const getPaymentMethodName = (method: PaymentMethod): string => {
+  const getPaymentMethodName = (method: string): string => {
     switch (method) {
       case 'credit_card': return 'Credit Card';
       case 'paypal': return 'PayPal';
@@ -55,6 +59,18 @@ export const usePaymentFlow = ({ onSuccess }: UsePaymentFlowProps) => {
     handleOtpSubmit: submission.handleOtpSubmit,
     handleExternalPaymentSubmit: submission.handleExternalPaymentSubmit,
     handleGooglePaySubmit: submission.handleGooglePaySubmit,
+    
+    // Navigation handlers
+    cancelCardDetails: handlers.cancelCardDetails || (() => state.setShowCardDetails(false)),
+    cancelExternalPayment: handlers.cancelExternalPayment || (() => state.setShowExternalPayment(false)),
+    handleBackToVerification: handlers.handleBackToVerification || (() => {
+      state.setShowOtpDialog(false);
+      state.setShowVerificationDialog(true);
+    }),
+    handleBackToCardDetails: handlers.handleBackToCardDetails || (() => {
+      state.setShowVerificationDialog(false);
+      state.setShowCardDetails(true);
+    }),
     
     // Utilities
     getPaymentMethodName

@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import PaymentMethodSelector from './PaymentMethodSelector';
 import PaymentSummary from './PaymentSummary';
 import PaymentDialogs from './PaymentDialogs';
-import { usePaymentFlow } from '@/hooks/usePaymentFlow';
+import { usePaymentFlow } from '@/hooks/payment/usePaymentFlow';
 import { mockGoogleAccounts } from '@/utils/mockPaymentData';
 
 interface PaymentScreenProps {

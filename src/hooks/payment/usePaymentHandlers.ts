@@ -1,7 +1,7 @@
 
-import { ChangeEvent, FormEvent } from 'react';
+import { ChangeEvent } from 'react';
 import { toast } from 'sonner';
-import { PaymentMethod, PaymentStatus, VerificationMethod } from './types';
+import { PaymentMethod, PaymentStatus, PaymentFormData } from './types';
 
 interface UsePaymentHandlersProps {
   paymentMethod: PaymentMethod;
@@ -13,6 +13,9 @@ interface UsePaymentHandlersProps {
   setShowOtpDialog: (show: boolean) => void;
   setShowGooglePayDialog: (show: boolean) => void;
   setErrorMessage: (message: string | null) => void;
+  setFormData: (fn: (prev: PaymentFormData) => PaymentFormData) => void;
+  formData: PaymentFormData;
+  errorMessage: string | null;
   onSuccess: () => void;
 }
 
@@ -26,6 +29,8 @@ export const usePaymentHandlers = ({
   setShowOtpDialog,
   setShowGooglePayDialog,
   setErrorMessage,
+  setFormData,
+  errorMessage,
   onSuccess
 }: UsePaymentHandlersProps) => {
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -54,6 +59,39 @@ export const usePaymentHandlers = ({
       setShowGooglePayDialog(true);
     } else {
       setShowExternalPayment(true);
+    }
+  };
+
+  const cancelCardDetails = () => {
+    setShowCardDetails(false);
+    setErrorMessage(null);
+  };
+
+  const cancelExternalPayment = () => {
+    setShowExternalPayment(false);
+    setErrorMessage(null);
+  };
+
+  const handleBackToVerification = () => {
+    setShowOtpDialog(false);
+    setShowVerificationDialog(true);
+  };
+
+  const handleBackToCardDetails = () => {
+    setShowVerificationDialog(false);
+    setShowCardDetails(true);
+  };
+
+  const getErrorMessageForMethod = (method: PaymentMethod): string => {
+    switch (method) {
+      case 'credit_card':
+        return 'Card payment failed. Please check your card details and try again.';
+      case 'paypal':
+        return 'PayPal payment failed. Please try again or use a different payment method.';
+      case 'google_pay':
+        return 'Google Pay payment failed. Please try again or use a different payment method.';
+      default:
+        return 'Payment failed. Please try again.';
     }
   };
 
@@ -86,6 +124,10 @@ export const usePaymentHandlers = ({
     clearError,
     handlePaymentMethodChange,
     handleProceed,
+    cancelCardDetails,
+    cancelExternalPayment,
+    handleBackToVerification,
+    handleBackToCardDetails,
     simulatePaymentProcessing
   };
 };
