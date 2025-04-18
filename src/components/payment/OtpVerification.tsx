@@ -30,6 +30,7 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({
   onBack
 }) => {
   const isDisabled = paymentStatus === 'processing' || paymentStatus === 'success';
+  const isButtonDisabled = otpValue.length < 6 || isDisabled;
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
@@ -44,7 +45,7 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({
           render={({ slots }) => (
             <InputOTPGroup>
               {slots.map((slot, i) => (
-                <InputOTPSlot key={i} {...slot} index={i} />
+                <InputOTPSlot key={i} {...slot} />
               ))}
             </InputOTPGroup>
           )}
@@ -58,7 +59,7 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({
       <div className="flex flex-col gap-2 pt-2">
         <Button 
           type="submit" 
-          disabled={otpValue.length < 6 || isDisabled}
+          disabled={isButtonDisabled}
           className="w-full"
         >
           {paymentStatus === 'processing' ? (

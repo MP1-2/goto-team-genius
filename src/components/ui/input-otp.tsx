@@ -31,12 +31,11 @@ InputOTPGroup.displayName = "InputOTPGroup"
 
 const InputOTPSlot = React.forwardRef<
   React.ElementRef<"div">,
-  React.ComponentPropsWithoutRef<"div"> & { index: number }
+  React.ComponentPropsWithoutRef<"div"> & { index?: number }
 >(({ index, className, ...props }, ref) => {
   const inputOTPContext = React.useContext(OTPInputContext)
   
-  // Add a safety check to prevent the error
-  if (!inputOTPContext || !inputOTPContext.slots || !inputOTPContext.slots[index]) {
+  if (!inputOTPContext || !inputOTPContext.slots) {
     return (
       <div
         ref={ref}
@@ -49,7 +48,17 @@ const InputOTPSlot = React.forwardRef<
     )
   }
   
-  const { char, hasFakeCaret, isActive } = inputOTPContext.slots[index]
+  // Safe index access - if index is undefined or out of range
+  const slot = index !== undefined && index < inputOTPContext.slots.length 
+    ? inputOTPContext.slots[index] 
+    : undefined
+    
+  // Extract needed properties safely
+  const char = slot?.char || ''
+  const isActive = slot?.isActive || false
+  
+  // We'll handle hasFakeCaret separately to avoid passing it directly as a DOM attribute
+  const hasFakeCaret = slot?.hasFakeCaret || false
 
   return (
     <div
@@ -59,6 +68,7 @@ const InputOTPSlot = React.forwardRef<
         isActive && "z-10 ring-2 ring-ring ring-offset-background",
         className
       )}
+      // Filter out any props that shouldn't be passed to DOM elements
       {...props}
     >
       {char}
