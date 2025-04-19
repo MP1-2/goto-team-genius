@@ -1,4 +1,3 @@
-
 import { FormEvent } from 'react';
 import { toast } from 'sonner';
 import { PaymentFormData, PaymentMethod, VerificationMethod } from './types';
@@ -105,8 +104,29 @@ export const usePaymentSubmission = ({
 
   const handleGooglePaySubmit = () => {
     setErrorMessage(null);
-    const shouldSucceed = Math.random() > 0.1;
-    simulatePaymentProcessing(shouldSucceed);
+    
+    // Open Google Pay in a new window
+    const googlePayWindow = window.open('https://pay.google.com/gp/w/home', '_blank', 'width=500,height=600');
+    
+    // Monitor for window close
+    const checkWindow = setInterval(() => {
+      if (googlePayWindow?.closed) {
+        clearInterval(checkWindow);
+        
+        // Mock successful payment after Google Pay window is closed
+        toast.info('Processing payment with Google Pay...');
+        
+        setTimeout(() => {
+          // Show payment confirmation toast
+          toast.info('Payment confirmed! Finalizing your purchase...');
+          
+          setTimeout(() => {
+            const shouldSucceed = Math.random() > 0.1;
+            simulatePaymentProcessing(shouldSucceed);
+          }, 1500);
+        }, 1000);
+      }
+    }, 500);
   };
 
   return {

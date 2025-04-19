@@ -193,23 +193,14 @@ const PaymentDialogs: React.FC<PaymentDialogsProps> = ({
       <Dialog open={showGooglePayDialog} onOpenChange={setShowGooglePayDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <div className="mx-auto mb-4">
-              <img 
-                src="/lovable-uploads/519f0b55-8035-453a-a94e-34f07575e103.png" 
-                alt="Google Pay" 
-                className="h-8" 
-              />
-            </div>
-            <DialogTitle className="text-center">Quét QR & Thanh toán bằng ứng dụng</DialogTitle>
+            <DialogTitle>Complete Payment with Google Pay</DialogTitle>
+            <DialogDescription>
+              Choose your account and payment method to complete the purchase
+            </DialogDescription>
           </DialogHeader>
           <GooglePayForm
-            googleAccounts={googleAccounts}
-            selectedGoogleAccount={selectedGoogleAccount}
-            selectedCard={selectedCard}
             errorMessage={errorMessage}
             paymentStatus={paymentStatus}
-            setSelectedGoogleAccount={setSelectedGoogleAccount}
-            setSelectedCard={setSelectedCard}
             onSubmit={onGooglePaySubmit}
           />
         </DialogContent>
@@ -225,10 +216,8 @@ const PaymentDialogs: React.FC<PaymentDialogsProps> = ({
             </DialogDescription>
           </DialogHeader>
           <PaypalForm
-            formData={formData}
             errorMessage={errorMessage}
             paymentStatus={paymentStatus}
-            onInputChange={onInputChange}
             onSubmit={onExternalPaymentSubmit}
             onCancel={onCancelExternalPayment}
           />
