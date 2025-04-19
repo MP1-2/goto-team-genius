@@ -1,10 +1,8 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, CheckCircle } from 'lucide-react';
 import ErrorAlert from './ErrorAlert';
 import SuccessAlert from './SuccessAlert';
-import Image from '@/components/ui/image';
 
 interface PaypalFormProps {
   errorMessage: string | null;

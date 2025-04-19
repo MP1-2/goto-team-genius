@@ -1,20 +1,11 @@
-import React from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import CreditCardForm from './CreditCardForm';
-import VerificationMethodSelector from './VerificationMethodSelector';
-import OtpVerification from './OtpVerification';
-import GooglePayForm from './GooglePayForm';
-import PaypalForm from './PaypalForm';
-import { PaymentMethod, PaymentStatus, VerificationMethod } from '@/hooks/payment/types';
 
-interface GoogleAccount {
-  email: string;
-  name: string;
-  cards: Array<{
-    type: string;
-    lastFour: string;
-  }>;
-}
+import React from 'react';
+import { PaymentMethod, PaymentStatus, VerificationMethod } from '@/hooks/payment/types';
+import CreditCardDialog from './dialogs/CreditCardDialog';
+import GooglePayDialog from './dialogs/GooglePayDialog';
+import PaypalDialog from './dialogs/PaypalDialog';
+import VerificationDialog from './dialogs/VerificationDialog';
+import OtpDialog from './dialogs/OtpDialog';
 
 interface PaymentDialogsProps {
   // Dialog state
@@ -25,19 +16,17 @@ interface PaymentDialogsProps {
   showGooglePayDialog: boolean;
   
   // Dialog setters
-  setShowCardDetails: (value: boolean) => void;
-  setShowExternalPayment: (value: boolean) => void;
-  setShowVerificationDialog: (value: boolean) => void;
-  setShowOtpDialog: (value: boolean) => void;
-  setShowGooglePayDialog: (value: boolean) => void;
+  setShowCardDetails: (show: boolean) => void;
+  setShowExternalPayment: (show: boolean) => void;
+  setShowVerificationDialog: (show: boolean) => void;
+  setShowOtpDialog: (show: boolean) => void;
+  setShowGooglePayDialog: (show: boolean) => void;
   
   // Payment state
   paymentMethod: PaymentMethod;
   paymentStatus: PaymentStatus;
   verificationMethod: VerificationMethod;
   otpValue: string;
-  selectedGoogleAccount: number;
-  selectedCard: number;
   errorMessage: string | null;
   formData: {
     cardNumber: string;
@@ -49,13 +38,8 @@ interface PaymentDialogsProps {
     accountId: string;
   };
   
-  // Google accounts data
-  googleAccounts: GoogleAccount[];
-  
   // Handlers
   setOtpValue: (value: string) => void;
-  setSelectedGoogleAccount: (index: number) => void;
-  setSelectedCard: (index: number) => void;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   getPaymentMethodName: (method: PaymentMethod) => string;
   clearError: () => void;
@@ -75,49 +59,31 @@ interface PaymentDialogsProps {
 }
 
 const PaymentDialogs: React.FC<PaymentDialogsProps> = ({
-  // Dialog state
   showCardDetails,
   showExternalPayment,
   showVerificationDialog,
   showOtpDialog,
   showGooglePayDialog,
-  
-  // Dialog setters
   setShowCardDetails,
   setShowExternalPayment,
   setShowVerificationDialog,
   setShowOtpDialog,
   setShowGooglePayDialog,
-  
-  // Payment state
   paymentMethod,
   paymentStatus,
   verificationMethod,
   otpValue,
-  selectedGoogleAccount,
-  selectedCard,
   errorMessage,
   formData,
-  
-  // Google accounts data
-  googleAccounts,
-  
-  // Handlers
   setOtpValue,
-  setSelectedGoogleAccount,
-  setSelectedCard,
   onInputChange,
   getPaymentMethodName,
   clearError,
-  
-  // Form submission handlers
   onSubmitCardDetails,
   onVerificationMethodSelect,
   onOtpSubmit,
   onExternalPaymentSubmit,
   onGooglePaySubmit,
-  
-  // Navigation handlers
   onCancelCardDetails,
   onCancelExternalPayment,
   onBackToVerification,
@@ -125,104 +91,58 @@ const PaymentDialogs: React.FC<PaymentDialogsProps> = ({
 }) => {
   return (
     <>
-      {/* Credit Card Details Dialog */}
-      <Dialog open={showCardDetails} onOpenChange={setShowCardDetails}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Enter Card Details</DialogTitle>
-            <DialogDescription>
-              Your payment information is secure and encrypted
-            </DialogDescription>
-          </DialogHeader>
-          <CreditCardForm
-            formData={formData}
-            errorMessage={errorMessage}
-            isProcessing={paymentStatus === 'processing'}
-            onInputChange={onInputChange}
-            onSubmit={onSubmitCardDetails}
-            onCancel={onCancelCardDetails}
-            clearError={clearError}
-          />
-        </DialogContent>
-      </Dialog>
-
-      {/* Verification Method Dialog */}
-      <Dialog open={showVerificationDialog} onOpenChange={setShowVerificationDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Choose Verification Method</DialogTitle>
-            <DialogDescription>
-              To verify your payment, choose how you'd like to receive the verification code
-            </DialogDescription>
-          </DialogHeader>
-          <VerificationMethodSelector
-            phoneNumber={formData.phone}
-            errorMessage={errorMessage}
-            onMethodSelect={onVerificationMethodSelect}
-            onBack={onBackToCardDetails}
-          />
-        </DialogContent>
-      </Dialog>
+      <CreditCardDialog
+        showCardDetails={showCardDetails}
+        setShowCardDetails={setShowCardDetails}
+        formData={formData}
+        errorMessage={errorMessage}
+        paymentStatus={paymentStatus}
+        onInputChange={onInputChange}
+        onSubmitCardDetails={onSubmitCardDetails}
+        onCancelCardDetails={onCancelCardDetails}
+        clearError={clearError}
+      />
       
-      {/* OTP Input Dialog */}
-      <Dialog open={showOtpDialog} onOpenChange={setShowOtpDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Enter Verification Code</DialogTitle>
-            <DialogDescription>
-              {verificationMethod === 'sms' 
-                ? `We've sent a 6-digit code to ${formData.phone || "+1 (***) ***-**67"} via SMS`
-                : `You'll receive a 6-digit code via phone call at ${formData.phone || "+1 (***) ***-**67"}`
-              }
-            </DialogDescription>
-          </DialogHeader>
-          <OtpVerification
-            phoneNumber={formData.phone}
-            verificationMethod={verificationMethod}
-            otpValue={otpValue}
-            setOtpValue={setOtpValue}
-            errorMessage={errorMessage}
-            paymentStatus={paymentStatus}
-            onSubmit={onOtpSubmit}
-            onBack={onBackToVerification}
-          />
-        </DialogContent>
-      </Dialog>
+      <GooglePayDialog
+        showGooglePayDialog={showGooglePayDialog}
+        setShowGooglePayDialog={setShowGooglePayDialog}
+        errorMessage={errorMessage}
+        paymentStatus={paymentStatus}
+        onSubmit={onGooglePaySubmit}
+      />
       
-      {/* Google Pay Dialog */}
-      <Dialog open={showGooglePayDialog} onOpenChange={setShowGooglePayDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Complete Payment with Google Pay</DialogTitle>
-            <DialogDescription>
-              Choose your account and payment method to complete the purchase
-            </DialogDescription>
-          </DialogHeader>
-          <GooglePayForm
-            errorMessage={errorMessage}
-            paymentStatus={paymentStatus}
-            onSubmit={onGooglePaySubmit}
-          />
-        </DialogContent>
-      </Dialog>
+      <PaypalDialog
+        showExternalPayment={showExternalPayment}
+        setShowExternalPayment={setShowExternalPayment}
+        paymentMethod={paymentMethod}
+        paymentStatus={paymentStatus}
+        errorMessage={errorMessage}
+        onSubmit={onExternalPaymentSubmit}
+        onCancel={onCancelExternalPayment}
+        getPaymentMethodName={getPaymentMethodName}
+      />
       
-      {/* External Payment Dialog (PayPal) */}
-      <Dialog open={showExternalPayment} onOpenChange={setShowExternalPayment}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{getPaymentMethodName(paymentMethod)} Payment</DialogTitle>
-            <DialogDescription>
-              Complete your {getPaymentMethodName(paymentMethod)} payment
-            </DialogDescription>
-          </DialogHeader>
-          <PaypalForm
-            errorMessage={errorMessage}
-            paymentStatus={paymentStatus}
-            onSubmit={onExternalPaymentSubmit}
-            onCancel={onCancelExternalPayment}
-          />
-        </DialogContent>
-      </Dialog>
+      <VerificationDialog
+        showVerificationDialog={showVerificationDialog}
+        setShowVerificationDialog={setShowVerificationDialog}
+        phoneNumber={formData.phone}
+        errorMessage={errorMessage}
+        onMethodSelect={onVerificationMethodSelect}
+        onBack={onBackToCardDetails}
+      />
+      
+      <OtpDialog
+        showOtpDialog={showOtpDialog}
+        setShowOtpDialog={setShowOtpDialog}
+        phoneNumber={formData.phone}
+        verificationMethod={verificationMethod}
+        otpValue={otpValue}
+        setOtpValue={setOtpValue}
+        errorMessage={errorMessage}
+        paymentStatus={paymentStatus}
+        onSubmit={onOtpSubmit}
+        onBack={onBackToVerification}
+      />
     </>
   );
 };
