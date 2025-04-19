@@ -38,8 +38,15 @@ interface PaymentDialogsProps {
     accountId: string;
   };
   
+  // States for Google Pay and card selection
+  selectedGoogleAccount?: number;
+  selectedCard?: number;
+  googleAccounts?: Array<any>;
+  
   // Handlers
   setOtpValue: (value: string) => void;
+  setSelectedGoogleAccount?: (index: number) => void;
+  setSelectedCard?: (index: number) => void;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   getPaymentMethodName: (method: PaymentMethod) => string;
   clearError: () => void;
@@ -75,7 +82,14 @@ const PaymentDialogs: React.FC<PaymentDialogsProps> = ({
   otpValue,
   errorMessage,
   formData,
+  // We don't use these props in this component directly, but they're passed from PaymentScreen
+  // so we need to include them in the interface
+  selectedGoogleAccount,
+  selectedCard,
+  googleAccounts,
   setOtpValue,
+  setSelectedGoogleAccount,
+  setSelectedCard,
   onInputChange,
   getPaymentMethodName,
   clearError,
