@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, CheckCircle, XCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
+import { useIsMobileOrMobileDevice } from '@/hooks/use-mobile';
 
 const MOCK_PURCHASED_NAMES = [
   { id: '1', name: 'Thunder Dragons', purchasedAt: '2025-03-15' },
@@ -20,6 +21,7 @@ const Reservation: React.FC = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isReserved, setIsReserved] = useState(false);
   const [purchasedNames] = useState(MOCK_PURCHASED_NAMES);
+  const isMobile = useIsMobileOrMobileDevice();
 
   useEffect(() => {
     // Check if team name is provided
@@ -68,14 +70,14 @@ const Reservation: React.FC = () => {
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <h1 className="ml-2 text-lg font-semibold">{teamName} Reservation</h1>
+          <h1 className={`ml-2 font-semibold ${isMobile ? 'text-base' : 'text-lg'}`}>{teamName} Reservation</h1>
         </div>
       </div>
 
-      <div className="px-6 pt-6">
+      <div className={`px-4 ${isMobile ? 'pt-4' : 'px-6 pt-6'}`}>
         <Card className="animate-fade-in">
           <CardHeader>
-            <CardTitle className="text-2xl">{teamName}</CardTitle>
+            <CardTitle className={isMobile ? "text-xl" : "text-2xl"}>{teamName}</CardTitle>
             <CardDescription>
               Secure exclusive rights to this team name
             </CardDescription>

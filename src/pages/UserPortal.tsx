@@ -1,17 +1,20 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { User } from 'lucide-react';
+import { User, Menu } from 'lucide-react';
 import BottomNavigation from '@/components/layout/BottomNavigation';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import LeftSidebar from '@/components/layout/LeftSidebar';
 import ActionShortcuts from '@/components/portal/ActionShortcuts';
 import TipsSection from '@/components/portal/TipsSection';
 import PlayerRankingsSection from '@/components/portal/PlayerRankingsSection';
+import MobileDrawer from '@/components/layout/MobileDrawer';
 
 const UserPortal: React.FC = () => {
   const navigate = useNavigate();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   const userInfo = localStorage.getItem('userInfo') 
     ? JSON.parse(localStorage.getItem('userInfo') || '{}') 
     : { name: 'User' };
@@ -31,7 +34,15 @@ const UserPortal: React.FC = () => {
               <div className="container mx-auto">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <SidebarTrigger className="md:hidden" />
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      onClick={() => setDrawerOpen(true)}
+                      className="md:hidden"
+                    >
+                      <Menu className="h-5 w-5" />
+                    </Button>
+                    <SidebarTrigger className="hidden md:flex" />
                     <h1 className="text-xl font-bold">Welcome, {userInfo.name}</h1>
                   </div>
                   <Button 
@@ -64,6 +75,9 @@ const UserPortal: React.FC = () => {
           </div>
         </div>
       </SidebarProvider>
+
+      {/* Mobile Drawer */}
+      <MobileDrawer open={drawerOpen} onOpenChange={setDrawerOpen} />
     </div>
   );
 };

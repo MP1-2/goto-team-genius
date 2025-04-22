@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { PaymentMethod, PaymentStatus, VerificationMethod } from '@/hooks/payment/types';
 import CreditCardDialog from './dialogs/CreditCardDialog';
@@ -6,6 +5,8 @@ import GooglePayDialog from './dialogs/GooglePayDialog';
 import PaypalDialog from './dialogs/PaypalDialog';
 import VerificationDialog from './dialogs/VerificationDialog';
 import OtpDialog from './dialogs/OtpDialog';
+import { useIsMobileOrMobileDevice } from '@/hooks/use-mobile';
+import { Drawer, DrawerContent, DrawerTitle, DrawerHeader } from '@/components/ui/drawer';
 
 interface PaymentDialogsProps {
   // Dialog state
@@ -103,6 +104,119 @@ const PaymentDialogs: React.FC<PaymentDialogsProps> = ({
   onBackToVerification,
   onBackToCardDetails
 }) => {
+  const isMobile = useIsMobileOrMobileDevice();
+  
+  // For mobile, we'll use a drawer component instead of a dialog
+  if (isMobile) {
+    return (
+      <>
+        {/* Credit Card Drawer */}
+        <Drawer open={showCardDetails} onOpenChange={setShowCardDetails}>
+          <DrawerContent className="max-h-[90vh]">
+            <DrawerHeader>
+              <DrawerTitle>Enter Card Details</DrawerTitle>
+            </DrawerHeader>
+            <div className="px-4 pb-4">
+              <CreditCardDialog
+                showCardDetails={showCardDetails}
+                setShowCardDetails={setShowCardDetails}
+                formData={formData}
+                errorMessage={errorMessage}
+                paymentStatus={paymentStatus}
+                onInputChange={onInputChange}
+                onSubmitCardDetails={onSubmitCardDetails}
+                onCancelCardDetails={onCancelCardDetails}
+                clearError={clearError}
+              />
+            </div>
+          </DrawerContent>
+        </Drawer>
+        
+        {/* Google Pay Drawer */}
+        <Drawer open={showGooglePayDialog} onOpenChange={setShowGooglePayDialog}>
+          <DrawerContent className="max-h-[90vh]">
+            <DrawerHeader>
+              <DrawerTitle>Google Pay</DrawerTitle>
+            </DrawerHeader>
+            <div className="px-4 pb-4">
+              <GooglePayDialog
+                showGooglePayDialog={showGooglePayDialog}
+                setShowGooglePayDialog={setShowGooglePayDialog}
+                errorMessage={errorMessage}
+                paymentStatus={paymentStatus}
+                onSubmit={onGooglePaySubmit}
+              />
+            </div>
+          </DrawerContent>
+        </Drawer>
+        
+        {/* PayPal Drawer */}
+        <Drawer open={showExternalPayment} onOpenChange={setShowExternalPayment}>
+          <DrawerContent className="max-h-[90vh]">
+            <DrawerHeader>
+              <DrawerTitle>{getPaymentMethodName(paymentMethod)}</DrawerTitle>
+            </DrawerHeader>
+            <div className="px-4 pb-4">
+              <PaypalDialog
+                showExternalPayment={showExternalPayment}
+                setShowExternalPayment={setShowExternalPayment}
+                paymentMethod={paymentMethod}
+                paymentStatus={paymentStatus}
+                errorMessage={errorMessage}
+                onSubmit={onExternalPaymentSubmit}
+                onCancel={onCancelExternalPayment}
+                getPaymentMethodName={getPaymentMethodName}
+              />
+            </div>
+          </DrawerContent>
+        </Drawer>
+        
+        {/* Verification Drawer */}
+        <Drawer open={showVerificationDialog} onOpenChange={setShowVerificationDialog}>
+          <DrawerContent className="max-h-[90vh]">
+            <DrawerHeader>
+              <DrawerTitle>Verify Your Identity</DrawerTitle>
+            </DrawerHeader>
+            <div className="px-4 pb-4">
+              <VerificationDialog
+                showVerificationDialog={showVerificationDialog}
+                setShowVerificationDialog={setShowVerificationDialog}
+                phoneNumber={formData.phone}
+                errorMessage={errorMessage}
+                onMethodSelect={onVerificationMethodSelect}
+                onBack={onBackToCardDetails}
+              />
+            </div>
+          </DrawerContent>
+        </Drawer>
+        
+        {/* OTP Drawer */}
+        <Drawer open={showOtpDialog} onOpenChange={setShowOtpDialog}>
+          <DrawerContent className="max-h-[90vh]">
+            <DrawerHeader>
+              <DrawerTitle>Enter Verification Code</DrawerTitle>
+            </DrawerHeader>
+            <div className="px-4 pb-4">
+              <OtpDialog
+                showOtpDialog={showOtpDialog}
+                setShowOtpDialog={setShowOtpDialog}
+                phoneNumber={formData.phone}
+                verificationMethod={verificationMethod}
+                otpValue={otpValue}
+                setOtpValue={setOtpValue}
+                errorMessage={errorMessage}
+                paymentStatus={paymentStatus}
+                onSubmit={onOtpSubmit}
+                onBack={onBackToVerification}
+              />
+            </div>
+          </DrawerContent>
+        </Drawer>
+      </>
+    );
+  }
+
+  // Desktop version remains the same
   return (
     <>
       <CreditCardDialog
